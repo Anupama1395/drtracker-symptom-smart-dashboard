@@ -429,6 +429,14 @@ if len(S["other_now"]):
     alerts.append(pill(plural(len(S["other_now"]), "vague report"), "gray", True))
 st.html(f'<div style="margin:4px 0 8px">{"".join(alerts)}</div>')
 
+if len(S["other_now"]):                       # vague reports: shown in the patient's own words, never coded
+    with st.container(border=True, key="card_vague"):
+        st.markdown(f"**Vague reports since {fmt_d(lv)}** · patient's own words, not coded to a symptom")
+        st.dataframe(S["other_now"].merge(reps[["report_id", "raw_text"]], on="report_id")[["onset", "raw_text"]]
+                     .sort_values("onset", ascending=False), hide_index=True, alt="Vague patient reports",
+                     column_config={"onset": st.column_config.DateColumn("Date", format="MMM D"),
+                                    "raw_text": st.column_config.TextColumn("Report", width="large")})
+
 # 5) tabs
 tab_over, tab_hist, tab_rep = st.tabs([":material/monitoring: Overview", ":material/history: History",
                                        f":material/description: Reports ({S['review']} to review)"])
@@ -558,6 +566,27 @@ with tab_hist:
                                for _, r in p_proc.iterrows())
                 st.html(f'<table class="dt"><tr><th>Date</th><th>Procedure</th><th>Status</th></tr>{rows}</table>')
 
+    with st.expander("Table view: sort, search, download CSV", icon=":material/table:"):
+        st.markdown("**Visits**")
+        st.dataframe(p_visits.sort_values("visit_date", ascending=False)[["visit_date", "visit_type", "provider", "notes"]],
+                     hide_index=True, alt="Visits table",
+                     column_config={"visit_date": st.column_config.DateColumn("Date", format="MMM D, YYYY"),
+                                    "visit_type": "Type", "provider": "Provider",
+                                    "notes": st.column_config.TextColumn("Notes", width="large")})
+        st.markdown("**Medications**")
+        med_tbl = p_med.assign(status=p_med["end_date"].apply(
+            lambda e: "Active" if pd.isna(e) or e > as_of else "Stopped"))
+        st.dataframe(med_tbl[["drug", "dose", "start_date", "end_date", "status", "prescribed_by", "reason"]],
+                     hide_index=True, alt="Medications table",
+                     column_config={"drug": "Drug", "dose": "Dose", "status": "Status",
+                                    "start_date": st.column_config.DateColumn("Start", format="MMM D"),
+                                    "end_date": st.column_config.DateColumn("End", format="MMM D"),
+                                    "prescribed_by": "Prescribed by", "reason": "Reason"})
+        st.markdown("**Procedures**")
+        st.dataframe(p_proc[["date", "procedure", "status"]], hide_index=True, alt="Procedures table",
+                     column_config={"date": st.column_config.DateColumn("Date", format="MMM D, YYYY"),
+                                    "procedure": "Procedure", "status": "Status"})
+
 with tab_rep:
     with st.container(border=True, key="card_review"):
         st.markdown(f"**Review queue** · since {fmt_d(lv)}")
@@ -584,6 +613,14 @@ with tab_rep:
                              f'<div>{chips}</div><div style="margin-top:6px">{flags}</div></div>')
             with st.container(height=480, border=False):
                 st.html("".join(cards))
+            with st.expander("Table view: sort, search, download CSV", icon=":material/table:"):
+                st.dataframe(q[["onset", "symptom", "severity", "frequency", "confidence", "extracted_by",
+                                "source", "flags", "raw_text"]], hide_index=True, alt="Review queue table",
+                             column_config={"onset": st.column_config.DateColumn("Date", format="MMM D"),
+                                            "symptom": "Symptom", "severity": "Severity", "frequency": "Count",
+                                            "confidence": st.column_config.NumberColumn("Confidence", format="%.1f"),
+                                            "extracted_by": "Parser", "source": "Source", "flags": "Flags",
+                                            "raw_text": st.column_config.TextColumn("Patient's words", width="large")})
 
     with st.container(border=True, key="card_raw"):
         st.markdown("**All reports**")
