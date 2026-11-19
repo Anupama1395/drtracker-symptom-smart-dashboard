@@ -1,13 +1,18 @@
-patient_id,drug,dose,start_date,end_date
-P001,cisplatin,100 mg/m2 weekly,2026-09-07,
-P001,ondansetron,8 mg,2026-09-07,2026-09-27
-P001,olanzapine,5 mg,2026-09-28,
-P002,cisplatin,100 mg/m2 weekly,2026-09-07,
-P002,ondansetron,8 mg,2026-09-07,
-P003,cisplatin,100 mg/m2 weekly,2026-09-07,
-P003,ondansetron,8 mg,2026-09-07,
-P004,cisplatin,100 mg/m2 weekly,2026-09-07,
-P004,ondansetron,8 mg,2026-09-07,2026-09-27
-P004,olanzapine,5 mg,2026-09-28,
-P005,cisplatin,100 mg/m2 weekly,2026-09-07,
-P005,ondansetron,8 mg,2026-09-07,
+patient_id,drug,dose,start_date,end_date,prescribed_by,reason
+P001,cisplatin,100 mg/m2 every 3 weeks,2026-09-07,,Dr. M. Chen (Medical Oncology),concurrent chemoradiation
+P001,lidocaine viscous 2%,15 mL swish/spit as needed,2026-09-21,,Dr. M. Chen (Medical Oncology),mouth pain from mucositis
+P001,ondansetron,8 mg every 8 h as needed,2026-09-07,2026-09-27,Dr. M. Chen (Medical Oncology),chemotherapy-induced nausea prophylaxis
+P001,olanzapine,5 mg nightly,2026-09-28,,"J. Alvarez, NP (Oncology)",breakthrough nausea despite ondansetron
+P002,cisplatin,100 mg/m2 every 3 weeks,2026-09-07,,Dr. M. Chen (Medical Oncology),concurrent chemoradiation
+P002,lidocaine viscous 2%,15 mL swish/spit as needed,2026-09-21,,Dr. M. Chen (Medical Oncology),mouth pain from mucositis
+P002,ondansetron,8 mg every 8 h as needed,2026-09-07,,Dr. M. Chen (Medical Oncology),chemotherapy-induced nausea prophylaxis
+P003,cisplatin,100 mg/m2 every 3 weeks,2026-09-07,,Dr. M. Chen (Medical Oncology),concurrent chemoradiation
+P003,lidocaine viscous 2%,15 mL swish/spit as needed,2026-09-21,,Dr. M. Chen (Medical Oncology),mouth pain from mucositis
+P003,ondansetron,8 mg every 8 h as needed,2026-09-07,,Dr. M. Chen (Medical Oncology),chemotherapy-induced nausea prophylaxis
+P004,cisplatin,100 mg/m2 every 3 weeks,2026-09-07,,Dr. M. Chen (Medical Oncology),concurrent chemoradiation
+P004,lidocaine viscous 2%,15 mL swish/spit as needed,2026-09-21,,Dr. M. Chen (Medical Oncology),mouth pain from mucositis
+P004,ondansetron,8 mg every 8 h as needed,2026-09-07,2026-09-27,Dr. M. Chen (Medical Oncology),chemotherapy-induced nausea prophylaxis
+P004,olanzapine,5 mg nightly,2026-09-28,,"J. Alvarez, NP (Oncology)",breakthrough nausea despite ondansetron
+P005,cisplatin,100 mg/m2 every 3 weeks,2026-09-07,,Dr. M. Chen (Medical Oncology),concurrent chemoradiation
+P005,lidocaine viscous 2%,15 mL swish/spit as needed,2026-09-21,,Dr. M. Chen (Medical Oncology),mouth pain from mucositis
+P005,ondansetron,8 mg every 8 h as needed,2026-09-07,,Dr. M. Chen (Medical Oncology),chemotherapy-induced nausea prophylaxis

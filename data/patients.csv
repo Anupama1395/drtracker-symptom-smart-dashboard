@@ -1,6 +1,6 @@
-patient_id,name,dob,diagnosis,treatment_start
-P001,Alex Rivera,1968-03-12,Oropharyngeal SCC,2026-09-07
-P002,Dana Okafor,1975-11-02,Laryngeal SCC,2026-09-07
-P003,Sam Lindqvist,1961-07-25,Oral cavity SCC,2026-09-07
-P004,Priya Nair,1979-01-18,Nasopharyngeal carcinoma,2026-09-07
-P005,Jordan Blake,1970-05-30,Oropharyngeal SCC,2026-09-07
+patient_id,name,dob,diagnosis,diagnosis_date,first_visit_date,treatment_start
+P001,Alex Rivera,1968-03-12,Oropharyngeal SCC,2026-07-22,2026-07-30,2026-09-07
+P002,Dana Okafor,1975-11-02,Laryngeal SCC,2026-07-26,2026-08-04,2026-09-07
+P003,Sam Lindqvist,1961-07-25,Oral cavity SCC,2026-07-21,2026-07-31,2026-09-07
+P004,Priya Nair,1979-01-18,Nasopharyngeal carcinoma,2026-07-21,2026-07-28,2026-09-07
+P005,Jordan Blake,1970-05-30,Oropharyngeal SCC,2026-07-18,2026-07-28,2026-09-07

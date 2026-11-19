@@ -1,0 +1,28 @@
+procedure_id,patient_id,procedure,date,status
+PR-P001-01,P001,Biopsy (oropharyngeal),2026-07-22,completed
+PR-P001-02,P001,PET/CT staging,2026-08-02,completed
+PR-P001-03,P001,Dental review pre-radiation,2026-08-06,completed
+PR-P001-04,P001,Audiology baseline (cisplatin),2026-08-11,completed
+PR-P001-05,P001,Radiation planning CT (simulation),2026-08-28,completed
+PR-P001-06,P001,Feeding tube (PEG) placement,2026-10-03,completed
+PR-P002-01,P002,Biopsy (laryngeal),2026-07-26,completed
+PR-P002-02,P002,PET/CT staging,2026-08-08,completed
+PR-P002-03,P002,Dental review pre-radiation,2026-08-11,completed
+PR-P002-04,P002,Audiology baseline (cisplatin),2026-08-12,completed
+PR-P002-05,P002,Radiation planning CT (simulation),2026-08-31,completed
+PR-P003-01,P003,Biopsy (oral),2026-07-21,completed
+PR-P003-02,P003,PET/CT staging,2026-08-04,completed
+PR-P003-03,P003,Dental review pre-radiation,2026-08-07,completed
+PR-P003-04,P003,Audiology baseline (cisplatin),2026-08-12,completed
+PR-P003-05,P003,Radiation planning CT (simulation),2026-08-31,completed
+PR-P004-01,P004,Biopsy (nasopharyngeal),2026-07-21,completed
+PR-P004-02,P004,PET/CT staging,2026-08-01,completed
+PR-P004-03,P004,Dental review pre-radiation,2026-08-04,completed
+PR-P004-04,P004,Audiology baseline (cisplatin),2026-08-09,completed
+PR-P004-05,P004,Radiation planning CT (simulation),2026-08-31,completed
+PR-P004-06,P004,Feeding tube (PEG) placement,2026-10-14,scheduled
+PR-P005-01,P005,Biopsy (oropharyngeal),2026-07-18,completed
+PR-P005-02,P005,PET/CT staging,2026-08-01,completed
+PR-P005-03,P005,Dental review pre-radiation,2026-08-04,completed
+PR-P005-04,P005,Audiology baseline (cisplatin),2026-08-09,completed
+PR-P005-05,P005,Radiation planning CT (simulation),2026-08-31,completed

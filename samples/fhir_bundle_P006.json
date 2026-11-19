@@ -1,0 +1,57 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "meta": {"tag": [{"code": "SYNTHETIC", "display": "Fictional test data, not a real patient"}]},
+  "entry": [
+    {"resource": {"resourceType": "Patient", "id": "P006",
+      "name": [{"given": ["Morgan"], "family": "Ellis"}], "birthDate": "1966-09-14"}},
+
+    {"resource": {"resourceType": "Condition", "id": "cond-1", "subject": {"reference": "Patient/P006"},
+      "code": {"text": "Oropharyngeal SCC", "coding": [{"system": "http://snomed.info/sct", "display": "Squamous cell carcinoma of oropharynx"}]},
+      "onsetDateTime": "2026-07-28"}},
+
+    {"resource": {"resourceType": "Encounter", "id": "enc-1", "status": "finished", "subject": {"reference": "Patient/P006"},
+      "type": [{"text": "first consult"}], "period": {"start": "2026-08-06T10:00:00"},
+      "participant": [{"individual": {"display": "Dr. M. Chen (Medical Oncology)"}}],
+      "reasonCode": [{"text": "New patient, biopsy-confirmed oropharyngeal SCC. Staging ordered."}]}},
+    {"resource": {"resourceType": "Encounter", "id": "enc-2", "status": "finished", "subject": {"reference": "Patient/P006"},
+      "type": [{"text": "treatment review"}], "period": {"start": "2026-09-04T14:00:00"},
+      "participant": [{"individual": {"display": "Dr. R. Patel (Radiation Oncology)"}}],
+      "reasonCode": [{"text": "Consent for chemoradiation signed."}]}},
+    {"resource": {"resourceType": "Encounter", "id": "enc-3", "status": "finished", "subject": {"reference": "Patient/P006"},
+      "type": [{"text": "follow-up"}], "period": {"start": "2026-09-14T09:30:00"},
+      "participant": [{"individual": {"display": "J. Alvarez, NP (Oncology)"}}],
+      "reasonCode": [{"text": "On-treatment check, mild nausea."}]}},
+
+    {"resource": {"resourceType": "Procedure", "id": "proc-1", "status": "completed", "subject": {"reference": "Patient/P006"},
+      "code": {"text": "Biopsy (oropharyngeal)"}, "performedDateTime": "2026-07-28"}},
+    {"resource": {"resourceType": "Procedure", "id": "proc-2", "status": "completed", "subject": {"reference": "Patient/P006"},
+      "code": {"text": "PET/CT staging"}, "performedDateTime": "2026-08-11"}},
+    {"resource": {"resourceType": "Procedure", "id": "proc-3", "status": "preparation", "subject": {"reference": "Patient/P006"},
+      "code": {"text": "Feeding tube (PEG) placement"}, "performedDateTime": "2026-10-20"}},
+
+    {"resource": {"resourceType": "MedicationRequest", "id": "med-1", "status": "active", "intent": "order",
+      "subject": {"reference": "Patient/P006"}, "authoredOn": "2026-09-07",
+      "medicationCodeableConcept": {"text": "cisplatin"},
+      "dosageInstruction": [{"text": "100 mg/m2 every 3 weeks"}],
+      "requester": {"display": "Dr. M. Chen (Medical Oncology)"},
+      "reasonCode": [{"text": "concurrent chemoradiation"}]}},
+    {"resource": {"resourceType": "MedicationRequest", "id": "med-2", "status": "active", "intent": "order",
+      "subject": {"reference": "Patient/P006"}, "authoredOn": "2026-09-07",
+      "medicationCodeableConcept": {"text": "ondansetron"},
+      "dosageInstruction": [{"text": "8 mg every 8 h as needed"}],
+      "requester": {"display": "Dr. M. Chen (Medical Oncology)"},
+      "reasonCode": [{"text": "chemotherapy-induced nausea prophylaxis"}]}},
+
+    {"resource": {"resourceType": "Observation", "id": "obs-1", "status": "final", "subject": {"reference": "Patient/P006"},
+      "code": {"coding": [{"system": "http://loinc.org", "code": "29463-7", "display": "Body weight"}]},
+      "effectiveDateTime": "2026-09-07", "valueQuantity": {"value": 78.4, "unit": "kg"}}},
+    {"resource": {"resourceType": "Observation", "id": "obs-2", "status": "final", "subject": {"reference": "Patient/P006"},
+      "code": {"coding": [{"system": "http://loinc.org", "code": "29463-7", "display": "Body weight"}]},
+      "effectiveDateTime": "2026-09-14", "valueQuantity": {"value": 77.6, "unit": "kg"}}},
+    {"resource": {"resourceType": "Observation", "id": "obs-3", "status": "final", "subject": {"reference": "Patient/P006"},
+      "code": {"text": "nausea"}, "effectiveDateTime": "2026-09-14", "valueInteger": 3}},
+    {"resource": {"resourceType": "Observation", "id": "obs-4", "status": "final", "subject": {"reference": "Patient/P006"},
+      "code": {"text": "hemoglobin"}, "effectiveDateTime": "2026-09-14", "valueQuantity": {"value": 12.1, "unit": "g/dL"}}}
+  ]
+}

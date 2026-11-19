@@ -20,8 +20,8 @@ ORDER BY patient_id, week;
 """
 
 # Q2: Did nausea change after a medication change?
-# Mean nausea severity in the 7 days before vs the 7 days after each new drug started
-# (cisplatin is the baseline chemo, so it's excluded).
+# Mean nausea severity in the 7 days before vs the 7 days after each new anti-nausea drug
+# started mid-treatment (picked via medications.reason, so the mouth rinse isn't included).
 Q2 = """
 SELECT m.patient_id,
        m.drug,
@@ -37,8 +37,9 @@ SELECT m.patient_id,
                  AND e.severity IS NOT NULL THEN 1 ELSE 0 END) AS n_scored_reports
 FROM medications m
 JOIN events e ON e.patient_id = m.patient_id AND e.symptom = 'nausea'
-WHERE m.drug <> 'cisplatin'
-  AND julianday(m.start_date) > (SELECT MIN(julianday(treatment_start)) FROM patients)
+JOIN patients p ON p.patient_id = m.patient_id
+WHERE m.reason LIKE '%nausea%'
+  AND julianday(m.start_date) > julianday(p.treatment_start)
 GROUP BY m.patient_id, m.drug, m.start_date
 ORDER BY m.patient_id;
 """

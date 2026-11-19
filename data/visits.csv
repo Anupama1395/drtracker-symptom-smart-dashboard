@@ -1,0 +1,31 @@
+visit_id,patient_id,visit_date,visit_type,provider,notes
+V-P001-01,P001,2026-07-30,first consult,Dr. M. Chen (Medical Oncology),"New patient, Oropharyngeal SCC confirmed on biopsy. Staging PET/CT, dental and audiology ordered. Plan: concurrent cisplatin + radiation."
+V-P001-02,P001,2026-09-04,treatment review,Dr. R. Patel (Radiation Oncology),Staging complete. Consent for chemoradiation signed. Start date confirmed for Sep 7.
+V-P001-03,P001,2026-09-14,follow-up,"J. Alvarez, NP (Oncology)","On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P001-04,P001,2026-09-21,treatment review,Dr. M. Chen (Medical Oncology),"Mucositis starting, grade 1-2. Started lidocaine viscous rinse for mouth pain."
+V-P001-05,P001,2026-09-28,follow-up,"J. Alvarez, NP (Oncology)","Nausea uncontrolled on ondansetron, weight trending down. Switched antiemetic to olanzapine 5 mg nightly. Dietitian referral."
+V-P001-06,P001,2026-10-05,treatment review,Dr. M. Chen (Medical Oncology),"Weight loss >5% since start. PEG placed Oct 3, tolerating feeds."
+V-P002-01,P002,2026-08-04,first consult,Dr. M. Chen (Medical Oncology),"New patient, Laryngeal SCC confirmed on biopsy. Staging PET/CT, dental and audiology ordered. Plan: concurrent cisplatin + radiation."
+V-P002-02,P002,2026-09-04,treatment review,Dr. R. Patel (Radiation Oncology),Staging complete. Consent for chemoradiation signed. Start date confirmed for Sep 7.
+V-P002-03,P002,2026-09-14,follow-up,"J. Alvarez, NP (Oncology)","On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P002-04,P002,2026-09-21,treatment review,Dr. M. Chen (Medical Oncology),"Mucositis starting, grade 1-2. Started lidocaine viscous rinse for mouth pain."
+V-P002-05,P002,2026-09-28,follow-up,"J. Alvarez, NP (Oncology)","On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P002-06,P002,2026-10-05,treatment review,Dr. M. Chen (Medical Oncology),"On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P003-01,P003,2026-07-31,first consult,Dr. M. Chen (Medical Oncology),"New patient, Oral cavity SCC confirmed on biopsy. Staging PET/CT, dental and audiology ordered. Plan: concurrent cisplatin + radiation."
+V-P003-02,P003,2026-09-04,treatment review,Dr. R. Patel (Radiation Oncology),Staging complete. Consent for chemoradiation signed. Start date confirmed for Sep 7.
+V-P003-03,P003,2026-09-14,follow-up,"J. Alvarez, NP (Oncology)","On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P003-04,P003,2026-09-21,treatment review,Dr. M. Chen (Medical Oncology),"Mucositis starting, grade 1-2. Started lidocaine viscous rinse for mouth pain."
+V-P003-05,P003,2026-09-28,follow-up,"J. Alvarez, NP (Oncology)","On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P003-06,P003,2026-10-05,treatment review,Dr. M. Chen (Medical Oncology),"On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P004-01,P004,2026-07-28,first consult,Dr. M. Chen (Medical Oncology),"New patient, Nasopharyngeal carcinoma confirmed on biopsy. Staging PET/CT, dental and audiology ordered. Plan: concurrent cisplatin + radiation."
+V-P004-02,P004,2026-09-04,treatment review,Dr. R. Patel (Radiation Oncology),Staging complete. Consent for chemoradiation signed. Start date confirmed for Sep 7.
+V-P004-03,P004,2026-09-14,follow-up,"J. Alvarez, NP (Oncology)","On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P004-04,P004,2026-09-21,treatment review,Dr. M. Chen (Medical Oncology),"Mucositis starting, grade 1-2. Started lidocaine viscous rinse for mouth pain."
+V-P004-05,P004,2026-09-28,follow-up,"J. Alvarez, NP (Oncology)","Nausea uncontrolled on ondansetron, weight trending down. Switched antiemetic to olanzapine 5 mg nightly. Dietitian referral."
+V-P004-06,P004,2026-10-05,treatment review,Dr. M. Chen (Medical Oncology),Weight loss >5% since start. PEG placement scheduled for Oct 14.
+V-P005-01,P005,2026-07-28,first consult,Dr. M. Chen (Medical Oncology),"New patient, Oropharyngeal SCC confirmed on biopsy. Staging PET/CT, dental and audiology ordered. Plan: concurrent cisplatin + radiation."
+V-P005-02,P005,2026-09-04,treatment review,Dr. R. Patel (Radiation Oncology),Staging complete. Consent for chemoradiation signed. Start date confirmed for Sep 7.
+V-P005-03,P005,2026-09-14,follow-up,"J. Alvarez, NP (Oncology)","On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P005-04,P005,2026-09-21,treatment review,Dr. M. Chen (Medical Oncology),"Mucositis starting, grade 1-2. Started lidocaine viscous rinse for mouth pain."
+V-P005-05,P005,2026-09-28,follow-up,"J. Alvarez, NP (Oncology)","On-treatment check. Tolerating chemoradiation, symptoms as expected."
+V-P005-06,P005,2026-10-05,treatment review,Dr. M. Chen (Medical Oncology),"On-treatment check. Tolerating chemoradiation, symptoms as expected."
