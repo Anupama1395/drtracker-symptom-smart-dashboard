@@ -30,3 +30,6 @@ tmp/
 
 # Runtime logs (scripts/restart.sh)
 logs/
+
+# Local LLM response cache (parser.py)
+data/llm_cache.sqlite

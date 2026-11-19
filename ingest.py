@@ -36,8 +36,25 @@ def event_rows(report_id, patient_id, reported_at, extraction: Extraction, by: s
             "flags": ";".join(flags),
             "review_status": "pending" if (e.needs_review or force_review) else None,
             "reviewed_at": None,
+            "reviewed_by": None,
+            "model": extraction.model,
+            "prompt_version": extraction.prompt_version,
+            "parse_ms": extraction.parse_ms,
         })
     return rows
+
+
+def parse_context(store: dict, patient_id: str, reported_at) -> dict:
+    """What the LLM gets besides the text: the report date and the medications active that day
+    (oldest first), so "the new pill" can be resolved to a drug name."""
+    day = pd.Timestamp(reported_at).normalize()
+    meds = store["medications"]
+    meds = meds[meds["patient_id"] == patient_id].copy()
+    meds["start"], meds["end"] = pd.to_datetime(meds["start_date"]), pd.to_datetime(meds["end_date"])
+    active = meds[(meds["start"].isna() | (meds["start"] <= day)) & (meds["end"].isna() | (meds["end"] >= day))]
+    return {"date": day.date().isoformat(),
+            "medications": [f"{m['drug']} (since {m['start'].date()})" if not pd.isna(m["start"]) else str(m["drug"])
+                            for _, m in active.sort_values("start").iterrows()]}
 
 
 def flag_conflicts(events: pd.DataFrame) -> pd.DataFrame:
@@ -186,7 +203,11 @@ def ingest_text(store: dict, patient_id: str, text: str, source: str = "upload",
     if (dup := find_duplicate(reports, patient_id, text, reported_at)) is not None:
         raise DuplicateReportError(dup)
 
-    extraction, by = parse_fn(read_header(text)["body"])
+    body = read_header(text)["body"]
+    if parse_fn is parse_report:                         # the real parser also gets date + medications
+        extraction, by = parse_report(body, context=parse_context(store, patient_id, reported_at))
+    else:
+        extraction, by = parse_fn(body)
     new_report = pd.DataFrame([[report_id, patient_id, reported_at.isoformat(), source, text]],
                               columns=reports.columns)
     rows = event_rows(report_id, patient_id, reported_at, extraction, by, first_event_id,
@@ -200,3 +221,40 @@ def ingest_text(store: dict, patient_id: str, text: str, source: str = "upload",
     if folder:
         save(store, folder)
     return report_id, new_events
+
+
+DATE_LINE = re.compile(r"\bDate:\s*(\d{4}-\d{2}-\d{2})")
+
+
+def split_by_date(text: str) -> list[tuple[str | None, str]]:
+    """A note with several "Date: YYYY-MM-DD" sections -> one (date, text) per section. Each section
+    keeps the shared header (Patient/DOB/...) so it stands on its own as a report."""
+    dates = list(DATE_LINE.finditer(text))
+    if len(dates) <= 1:
+        return [(dates[0].group(1) if dates else None, text)]
+    header = text[:dates[0].start()].rstrip()
+    out = []
+    for i, m in enumerate(dates):
+        end = dates[i + 1].start() if i + 1 < len(dates) else len(text)
+        out.append((m.group(1), (header + "\n" if header else "") + text[m.start():end].strip()))
+    return out
+
+
+def ingest_document(store: dict, patient_id: str, text: str, source: str = "upload",
+                    reported_at: datetime | None = None, folder: str | None = "data",
+                    parse_fn: Callable[[str], tuple[Extraction, str]] = parse_report) -> list[dict]:
+    """Ingest a whole uploaded note: one report per "Date:" section. Returns one result per section:
+    {"date", "report_id", "events" (DataFrame) | None, "error" (str) | None}. A duplicate section is
+    reported and skipped; the others are still stored."""
+    results = []
+    sections = split_by_date(text)
+    for day, section in sections:
+        when = (datetime.combine(pd.Timestamp(day).date(), datetime.min.time()).replace(hour=12)
+                if day and len(sections) > 1 else reported_at)
+        try:
+            rid, new = ingest_text(store, patient_id, section, source=source, reported_at=when,
+                                   folder=folder, parse_fn=parse_fn)
+            results.append({"date": day, "report_id": rid, "events": new, "error": None})
+        except DuplicateReportError as err:
+            results.append({"date": day, "report_id": err.report_id, "events": None, "error": str(err)})
+    return results

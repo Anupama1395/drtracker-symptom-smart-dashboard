@@ -14,7 +14,7 @@ import sys
 import pandas as pd
 
 import Synthetic_datagenerator as generate_data
-from ingest import event_rows, flag_conflicts, read_header, typed_events
+from ingest import event_rows, flag_conflicts, parse_context, read_header, typed_events
 from parser import parse_report
 from schema import clear_review_history, load, load_corrections, save
 
@@ -50,7 +50,8 @@ def parse_reports(store, reports, limit=None) -> list[dict]:
     if limit is not None:
         reports = reports.head(limit)
     for _, r in reports.iterrows():
-        extraction, by = parse_report(read_header(r.raw_text)["body"])   # header lines aren't symptoms
+        extraction, by = parse_report(read_header(r.raw_text)["body"],      # header lines aren't symptoms
+                                      context=parse_context(store, r.patient_id, r.reported_at))
         rows += event_rows(r.report_id, r.patient_id, r.reported_at, extraction, by,
                            first_event_id=start + len(rows),
                            force_review=(r.source == "upload"),
