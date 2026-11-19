@@ -10,7 +10,8 @@ from plotly.subplots import make_subplots
 
 from ingest import extract_text, ingest_text, other_patient_ids, read_header, register_patient
 from pdf_summary import summary_pdf
-from schema import load
+from review import accept, dismiss, edit, ensure_review_columns, export_gold
+from schema import SYMPTOMS, load, load_corrections, save, save_corrections
 
 st.set_page_config(page_title="Dr.Tracker — Pre-visit view", page_icon=":material/monitor_heart:", layout="wide")
 
@@ -84,6 +85,13 @@ def flag_pills(flags: str) -> str:
     return "".join(dict.fromkeys(out))                        # de-duplicate, keep order
 
 
+def review_action(kind, event_id, symptom):
+    """Accept / Dismiss button callback: apply to a fresh copy from disk and save."""
+    fresh = load()
+    save((accept if kind == "accept" else dismiss)(fresh, event_id))
+    st.session_state.review_msg = f"{'Accepted' if kind == 'accept' else 'Dismissed'} {nice(symptom)} (event {event_id})."
+
+
 # ---------------- load ----------------
 if "upload_n" not in st.session_state:
     st.session_state.upload_n = 0          # bumping this clears the file uploader after an ingest
@@ -98,6 +106,9 @@ if ev.empty or pts.empty:
 ev["onset"] = pd.to_datetime(ev["onset"])
 ev["flags"] = ev["flags"].fillna("").astype(str)
 ev["needs_review"] = ev["needs_review"].astype(str).str.lower().eq("true")
+ev = ensure_review_columns(ev)
+ev_all = ev                                   # incl. dismissed: for the review history only
+ev = ev[ev["review_status"] != "dismissed"]   # dismissed events never reach tiles, charts or the banner
 reps["reported_at"] = pd.to_datetime(reps["reported_at"])
 vit["measured_at"] = pd.to_datetime(vit["measured_at"])
 for col in ["start_date", "end_date"]:
@@ -148,8 +159,9 @@ def summarize(pid, lv):
         s["wt_change"] = s["wt_pct"] = None
 
     s["other_now"] = recent[recent["symptom"] == "other"]
-    s["review"] = int(recent["needs_review"].sum())
-    s["conflicts"] = int(recent["flags"].str.contains("same_day_conflict").sum())
+    pending = recent["review_status"].eq("pending")             # counts show only what is still open
+    s["review"] = int(pending.sum())
+    s["conflicts"] = int((recent["flags"].str.contains("same_day_conflict") & pending).sum())
     p_reps = reps[reps["patient_id"] == pid]
     s["n_new"] = int((p_reps["reported_at"] >= lv).sum())
 
@@ -249,6 +261,8 @@ def pick(label):
 with st.sidebar:
     st.markdown(f"### :material/monitor_heart: Dr.Tracker")
     st.caption("Pre-visit view · oncology")
+    if msg := st.session_state.pop("review_msg", None):
+        st.toast(msg, icon=":material/task_alt:")
     if msg := st.session_state.pop("upload_msg", None):
         st.success(msg, icon=":material/check_circle:")
 
@@ -590,37 +604,87 @@ with tab_hist:
 with tab_rep:
     with st.container(border=True, key="card_review"):
         st.markdown(f"**Review queue** · since {fmt_d(lv)}")
-        q = recent[recent["needs_review"]].merge(reps[["report_id", "reported_at", "source", "raw_text"]],
-                                                 on="report_id", how="left")
+        q = recent[recent["review_status"].eq("pending")].merge(
+            reps[["report_id", "reported_at", "source", "raw_text"]], on="report_id", how="left")
         if q.empty:
             st.caption("Nothing is waiting for review since the last visit.")
         else:
-            st.caption(f"{plural(q['report_id'].nunique(), 'report')} · {plural(len(q), 'extracted item')}. "
-                       "Raw text is the patient's own words; chips are what the parser extracted.")
-            cards = []
-            for rid, g in q.sort_values("onset", ascending=False).groupby("report_id", sort=False):
-                first = g.iloc[0]
-                chips = "".join(
-                    f'<span class="chip">{esc(nice(r["symptom"]).capitalize())}'
-                    + ("" if pd.isna(r["severity"]) else f' · {r["severity"]:.0f}/10')
-                    + ("" if pd.isna(r["frequency"]) else f' · ×{int(r["frequency"])}')
-                    + f' · conf {r["confidence"]:.1f}</span>' for _, r in g.iterrows())
-                flags = flag_pills(";".join(g["flags"])) or pill("Low confidence", "amber")
-                when = first["reported_at"] if not pd.isna(first["reported_at"]) else first["onset"]
-                cards.append(f'<div class="rq"><div class="rq-head"><span>{fmt_d(when)} · '
-                             f'{esc(str(first["source"] or "import"))}</span><span>#{esc(str(rid))}</span></div>'
-                             f'<div class="rq-text">“{esc(str(first["raw_text"] or "(structured import, no text)"))}”</div>'
-                             f'<div>{chips}</div><div style="margin-top:6px">{flags}</div></div>')
-            with st.container(height=480, border=False):
-                st.html("".join(cards))
-            with st.expander("Table view: sort, search, download CSV", icon=":material/table:"):
-                st.dataframe(q[["onset", "symptom", "severity", "frequency", "confidence", "extracted_by",
-                                "source", "flags", "raw_text"]], hide_index=True, alt="Review queue table",
-                             column_config={"onset": st.column_config.DateColumn("Date", format="MMM D"),
+            st.caption(f"{plural(q['report_id'].nunique(), 'report')} · {plural(len(q), 'item')} pending. "
+                       "The quote is the patient's own words and is never changed; act on what the parser extracted.")
+            with st.container(height=560, border=False):
+                for rid, g in q.sort_values("onset", ascending=False).groupby("report_id", sort=False):
+                    first = g.iloc[0]
+                    when = first["reported_at"] if not pd.isna(first["reported_at"]) else first["onset"]
+                    with st.container(border=True, key=f"card_rq_{rid}"):
+                        st.html(f'<div class="rq-head"><span>{fmt_d(when)} · {esc(str(first["source"] or "import"))}'
+                                f'</span><span>#{esc(str(rid))}</span></div><div class="rq-text">'
+                                f'“{esc(str(first["raw_text"] or "(structured import, no text)"))}”</div>'
+                                f'<div>{flag_pills(";".join(g["flags"])) or pill("Low confidence", "amber")}</div>')
+                        for _, r in g.iterrows():
+                            eid = r["event_id"]
+                            c_txt, c_acc, c_edit, c_dis = st.columns([5, 1.3, 1.2, 1.4], vertical_alignment="center")
+                            c_txt.html(f'<span class="chip">{esc(nice(r["symptom"]).capitalize())}'
+                                       + ("" if pd.isna(r["severity"]) else f' · {r["severity"]:.0f}/10')
+                                       + ("" if pd.isna(r["frequency"]) else f' · ×{int(r["frequency"])}')
+                                       + f' · conf {r["confidence"]:.1f} · {esc(str(r["extracted_by"]))}</span>')
+                            c_acc.button("Accept", key=f"acc_{eid}", icon=":material/check:", width="stretch",
+                                         on_click=review_action, args=("accept", eid, r["symptom"]))
+                            with c_edit.popover("Edit", icon=":material/edit:", width="stretch"):
+                                with st.form(f"edit_{eid}", border=False):
+                                    sym = st.selectbox("Symptom", SYMPTOMS, index=SYMPTOMS.index(r["symptom"]),
+                                                       format_func=lambda s: nice(s).capitalize())
+                                    sev = st.number_input("Severity 0–10 (empty = not stated)", step=1,
+                                                          value=None if pd.isna(r["severity"]) else int(r["severity"]))
+                                    freq = st.number_input("Episodes (empty = not stated)", step=1,
+                                                           value=None if pd.isna(r["frequency"]) else int(r["frequency"]))
+                                    if st.form_submit_button("Save correction", type="primary", width="stretch"):
+                                        try:
+                                            fresh, corr = edit(load(), load_corrections(), eid, sym, sev, freq)
+                                            save(fresh)
+                                            save_corrections(corr)
+                                            st.session_state.review_msg = f"Saved correction to {nice(sym)} (event {eid})."
+                                            st.rerun()
+                                        except ValueError as err:
+                                            st.error(str(err))
+                            c_dis.button("Dismiss", key=f"dis_{eid}", icon=":material/close:", width="stretch",
+                                         on_click=review_action, args=("dismiss", eid, r["symptom"]))
+
+        done = ev_all[(ev_all["patient_id"] == pid) & ev_all["review_status"].isin(["accepted", "edited", "dismissed"])]
+        corrections = load_corrections()
+        with st.expander(f"Reviewed items ({len(done)}) and corrections log", icon=":material/fact_check:"):
+            if done.empty:
+                st.caption("Nothing reviewed yet for this patient.")
+            else:
+                st.dataframe(done.merge(reps[["report_id", "raw_text"]], on="report_id", how="left")
+                             .sort_values("reviewed_at", ascending=False)[
+                                 ["reviewed_at", "review_status", "symptom", "severity", "frequency", "raw_text"]],
+                             hide_index=True, alt="Reviewed items",
+                             column_config={"reviewed_at": "Reviewed", "review_status": "Decision",
                                             "symptom": "Symptom", "severity": "Severity", "frequency": "Count",
-                                            "confidence": st.column_config.NumberColumn("Confidence", format="%.1f"),
-                                            "extracted_by": "Parser", "source": "Source", "flags": "Flags",
                                             "raw_text": st.column_config.TextColumn("Patient's words", width="large")})
+                mine = corrections[corrections["event_id"].astype(str).isin(done["event_id"].astype(str))]
+                if len(mine):
+                    st.markdown("**Field changes**")
+                    st.dataframe(mine.sort_values("corrected_at", ascending=False), hide_index=True,
+                                 alt="Corrections log", column_config={
+                                     "event_id": "Event", "field": "Field", "old_value": "Was",
+                                     "new_value": "Now", "corrected_at": "When"})
+        c1, c2 = st.columns([3, 2], vertical_alignment="center")
+        c1.caption(f"{plural(int(ev_all['review_status'].isin(['accepted', 'edited', 'dismissed']).sum()), 'decision')} "
+                   f"across all patients · {plural(len(corrections), 'field correction')}. Fully reviewed reports "
+                   "can become new test labels for evaluate.py.")
+        if c2.button("Export corrections as gold labels", icon=":material/output:", width="stretch"):
+            n = export_gold(load(), "gold_corrections.json")
+            st.success(f"Wrote {plural(n, 'fully reviewed report')} to gold_corrections.json. "
+                       "Run `python evaluate.py` to score the parser on them.")
+        with st.expander("Table view of pending items: sort, search, download CSV", icon=":material/table:"):
+            st.dataframe(q[["onset", "symptom", "severity", "frequency", "confidence", "extracted_by",
+                            "source", "flags", "raw_text"]], hide_index=True, alt="Review queue table",
+                         column_config={"onset": st.column_config.DateColumn("Date", format="MMM D"),
+                                        "symptom": "Symptom", "severity": "Severity", "frequency": "Count",
+                                        "confidence": st.column_config.NumberColumn("Confidence", format="%.1f"),
+                                        "extracted_by": "Parser", "source": "Source", "flags": "Flags",
+                                        "raw_text": st.column_config.TextColumn("Patient's words", width="large")})
 
     with st.container(border=True, key="card_raw"):
         st.markdown("**All reports**")

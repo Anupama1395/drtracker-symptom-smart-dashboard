@@ -22,7 +22,7 @@ ollama pull llama3.1:8b              # optional: without it the regex fallback i
 python pipeline_runner.py            # generate the data, parse every report, save CSV + SQLite (python pipeline_runner.py 3 = first 3 reports only)
 python Queries.py                    # the SQL queries
 python evaluate.py                   # parser accuracy: LLM vs regex
-python -m pytest                     # 37 tests, no LLM needed
+python -m pytest                     # 59 tests, no LLM needed
 streamlit run app.py                 # dashboard
 python importer.py samples/fhir_bundle_P006.json          # preview a FHIR import (add --save to merge it into data/)
 ```
@@ -41,8 +41,9 @@ python importer.py samples/fhir_bundle_P006.json          # preview a FHIR impor
 | `importer.py`, `samples/` | EHR import stub and a synthetic FHIR R4 Bundle |
 | `Queries.py` | Three SQL queries |
 | `evaluate.py`, `gold.json` | Parser evaluation against 30 hand-labelled reports and the silver labels |
-| `app.py` | Pre-visit dashboard and document upload |
-| `tests/` | Tests for the parser, schema, generator, upload and FHIR import |
+| `review.py` | Clinician review actions (accept, edit, dismiss), corrections log, gold-label export |
+| `app.py` | Pre-visit dashboard, review queue and document upload |
+| `tests/` | Tests for the parser, schema, generator, upload, FHIR import and review actions |
 
 ## Schema
 
@@ -56,7 +57,9 @@ procedures   (procedure_id, patient_id, procedure, date, status)        -- statu
 medications  (patient_id, drug, dose, start_date, end_date, prescribed_by, reason)   -- one row per medication period
 reports      (report_id, patient_id, reported_at, source, raw_text)    -- exactly what the patient wrote, never edited
 events       (event_id, report_id -> reports, patient_id, symptom, severity 0-10, frequency,
-              onset, related_med, confidence, extracted_by, needs_review, flags)
+              onset, related_med, confidence, extracted_by, needs_review, flags,
+              review_status, reviewed_at)                                -- pending | accepted | edited | dismissed
+corrections  (event_id, field, old_value, new_value, corrected_at)      -- audit log of clinician edits
 vitals       (patient_id, measured_at, kind, value)                     -- weight
 ```
 
@@ -128,7 +131,7 @@ The parser has four layers:
 
 The regex scores 1.00 on the silver labels because it was written against the same templates. Its recall drops to 0.80 on wording it hasn't seen. That gap is the case for the LLM. The regex stays as a fallback because it is predictable and cannot hallucinate.
 
-**Tests** (`python -m pytest`, 37 tests): they cover negation, "last night", severity words and numbers, clause handling, every rule check, and the LLM failure paths (LLM down, severity 12, made-up symptom name, valid output). They also cover the save/load round trip, empty data, timeline order in the generator, deterministic output, the upload path (txt and pdf), and the FHIR import. The LLM is replaced in the tests, so they run without Ollama.
+**Tests** (`python -m pytest`, 59 tests): they cover negation, "last night", severity words and numbers, clause handling, every rule check, and the LLM failure paths (LLM down, severity 12, made-up symptom name, valid output). They also cover the save/load round trip, empty data, timeline order in the generator, deterministic output, the upload path (txt and pdf), the FHIR import, and the review actions (accept, edit, refusing severity 12, dismiss, raw text unchanged, gold export). The LLM is replaced in the tests, so they run without Ollama.
 
 ## Queries (`Queries.py`, SQL over SQLite)
 
@@ -195,6 +198,26 @@ Any other observation (the sample includes a hemoglobin result) is skipped rathe
 
 **What a real integration would change:** only how the Bundle is fetched. Instead of reading a file, it would call the practice's FHIR API, for example `GET [base]/Patient/{id}/$everything` with an OAuth token (SMART on FHIR backend services). Paging and rate limits would need handling. The mapping functions would stay the same. Coverage of FHIR resources differs between EHR vendors, and some practices only offer HL7v2 or CSV exports. A new `IMPORTERS` entry would handle each. This prototype has not been tested against any real EHR, and I make no compliance claims about it.
 
+## Clinician review
+
+Every item the parser is unsure about lands in the **review queue** (Reports tab). Each card shows the patient's own words, what was extracted, and why it was flagged. Each extracted item has three actions:
+
+| Action | What it does |
+|---|---|
+| **Accept** | The extraction is right. `review_status = accepted`, `needs_review = False`. |
+| **Edit** | Fix the symptom, severity or count. The new values are validated with the **same `SymptomEvent` Pydantic model** the parser uses, so a severity of 12 is refused and nothing is saved. A saved edit sets `extracted_by = "manual"`, and every changed field is written to `corrections` (old value, new value, time). |
+| **Dismiss** | The item isn't real. It stays in the table for the audit trail, but tiles, charts and the banner leave it out. |
+
+- **The raw report text is never changed.** Only the extracted events are.
+- **Counts show only pending items:** the banner, the alert pills, the Reports tab label and the patient list.
+- **Corrections become test data.** "Export corrections as gold labels" writes `gold_corrections.json` in the same format as `gold.json`. Only reports where *every* extracted item has a decision are exported, so unchecked parser output never counts as truth. `python evaluate.py` scores the parser on these reports too, and on both sets combined.
+- **Re-running detection doesn't undo a review.** A conflict a clinician has already reviewed is not reopened when a later upload triggers conflict detection again.
+
+**Where reviews are stored, and when they're lost:**
+- **`python pipeline_runner.py` rebuilds `data/` from scratch.** That resets every review decision and empties the corrections log. Export the gold labels first if you want to keep them.
+- **On Streamlit Community Cloud, reviews are temporary.** The app writes to the container's disk, which is wiped whenever the app restarts or redeploys. Keeping them would need a real database.
+- **No reviewer identity is recorded yet.** A real system would log *who* made each decision, not only when.
+
 ## Where AI is used, and where it isn't
 
 - **Used:** turning messy free text (daily reports and uploaded notes) into structured fields. This is the part rules handle badly.
@@ -206,7 +229,7 @@ Any other observation (the sample includes a hemoglobin result) is skipped rathe
 - **A local 8B model instead of a hosted API:** free, and no data leaves the machine. The cost is accuracy and speed. For the demo I run the batch ahead of time and parse one or two reports live, or upload a note.
 - **CSV plus SQLite instead of Postgres:** no setup, and everything sits in the repo. The schema is relational and would move to Postgres unchanged.
 - **The upload rewrites files:** each upload rewrites the CSVs and the database. That is fine for one user. Several users at once would need a real database with transactions.
-- **`pipeline_runner.py` regenerates `data/`:** this drops any uploads or imports. That keeps the demo reproducible; a real system would add data incrementally.
+- **`pipeline_runner.py` regenerates `data/`:** this drops any uploads, imports and review decisions. That keeps the demo reproducible; a real system would add data incrementally.
 - **The history is generated, not real.** Visits, procedures and doses are plausible for head-and-neck chemoradiation, but they are illustrative and not clinical guidance.
 - **Synthetic data is cleaner than real patients.** The gold set is small: 30 reports, labelled by one person.
 - **Severity scale:** putting different symptoms on one 0–10 scale is a simplification. Real use would probably map to CTCAE grades, with clinical input.

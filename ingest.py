@@ -34,6 +34,8 @@ def event_rows(report_id, patient_id, reported_at, extraction: Extraction, by: s
             "extracted_by": by,
             "needs_review": bool(e.needs_review or force_review),
             "flags": ";".join(flags),
+            "review_status": "pending" if (e.needs_review or force_review) else None,
+            "reviewed_at": None,
         })
     return rows
 
@@ -55,10 +57,16 @@ def flag_conflicts(events: pd.DataFrame) -> pd.DataFrame:
             continue
         sev = grp["severity"].astype(float)
         if ((sev == 0).any() and (sev > 0).any()) or (sev.max() - sev.min() >= 4):
-            idx = grp.index
+            # Only rows not already flagged: re-running this (e.g. after an upload) must not
+            # re-open a conflict a clinician has already reviewed.
+            idx = grp.index[~grp["flags"].str.contains("same_day_conflict")]
+            if len(idx) == 0:
+                continue
             ev.loc[idx, "needs_review"] = True
+            if "review_status" in ev.columns:
+                ev.loc[idx, "review_status"] = "pending"
             ev.loc[idx, "flags"] = ev.loc[idx, "flags"].apply(
-                lambda f: f if "same_day_conflict" in f else ";".join([x for x in [f, "same_day_conflict"] if x]))
+                lambda f: ";".join([x for x in [f, "same_day_conflict"] if x]))
     return ev
 
 

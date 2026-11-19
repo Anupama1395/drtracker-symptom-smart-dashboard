@@ -4,6 +4,8 @@
 #   2. Silver labels (data/silver_labels.csv, symptom labels carried over from the generator
 #      templates): symptom precision/recall over every stored report, from the saved events.
 import json
+import os
+
 import pandas as pd
 from parser import parse_report, regex_parse
 
@@ -61,6 +63,20 @@ if __name__ == "__main__":
     else:
         print("  llm    LLM unavailable (Ollama not running?) — skipped, not scored as regex")
     print("  regex ", score_gold(gold, regex_parse))
+
+    # Labels produced by clinicians in the dashboard (Reports tab -> Export corrections as gold labels)
+    if os.path.exists("gold_corrections.json"):
+        with open("gold_corrections.json") as f:
+            corrected = json.load(f)
+        if corrected:
+            print(f"\nClinician-reviewed reports ({len(corrected)}, from gold_corrections.json)")
+            if by[0] == "llm":
+                print("  llm   ", score_gold(corrected, lambda t: parse_report(t)[0]))
+            print("  regex ", score_gold(corrected, regex_parse))
+            print(f"\nCombined ({len(gold) + len(corrected)} reports)")
+            if by[0] == "llm":
+                print("  llm   ", score_gold(gold + corrected, lambda t: parse_report(t)[0]))
+            print("  regex ", score_gold(gold + corrected, regex_parse))
 
     print("\nSilver labels (stored pipeline output vs generator template labels)")
     print("  ", score_silver())

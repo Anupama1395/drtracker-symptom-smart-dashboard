@@ -44,7 +44,13 @@ events_cols = [
     "extracted_by",   # "llm" | "rule" | "import" | "manual"
     "needs_review",   # True if vague / conflicting / low confidence / uploaded
     "flags",          # which checks fired, ";"-separated
+    "review_status",  # "pending" | "accepted" | "edited" | "dismissed"; empty = never needed review
+    "reviewed_at",    # when a clinician acted on it
 ]
+
+# Audit log of clinician edits: one row per changed field. Kept outside the main store
+# (data/corrections.csv + its own SQLite table) so it survives being appended to, never rewritten.
+corrections_cols = ["event_id", "field", "old_value", "new_value", "corrected_at"]
 
 # One row per measurement
 vitals_cols = ["patient_id", "measured_at", "kind", "value"]
@@ -111,6 +117,19 @@ def load(folder="data"):
         path = os.path.join(folder, f"{name}.csv")
         store[name] = pd.read_csv(path) if os.path.exists(path) else pd.DataFrame(columns=cols)
     return store
+
+
+def load_corrections(folder="data"):
+    path = os.path.join(folder, "corrections.csv")
+    return pd.read_csv(path) if os.path.exists(path) else pd.DataFrame(columns=corrections_cols)
+
+
+def save_corrections(corrections, folder="data"):
+    os.makedirs(folder, exist_ok=True)
+    df = storable(corrections)
+    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+        df.to_sql("corrections", conn, if_exists="replace", index=False)
+    df.to_csv(os.path.join(folder, "corrections.csv"), index=False)
 
 
 def connect(folder="data"):
