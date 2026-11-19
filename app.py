@@ -31,28 +31,44 @@ earlier = p_ev[p_ev["onset"] <  pd.Timestamp(last_visit)]
 
 cols = st.columns(4)
 deltas = {}
-for i, sym in enumerate(["nausea", "vomiting", "mouth_sores", "pain"]):
+
+# Vomiting is reported as a count, not a 0-10 score: compare episodes since the last visit
+# with an equally long window just before it.
+lv = pd.Timestamp(last_visit)
+span = max(p_ev["onset"].max() - lv, pd.Timedelta(days=1))
+vom = p_ev[(p_ev["symptom"] == "vomiting") & (p_ev["severity"].fillna(1) > 0)]
+vomits = vom[vom["onset"] >= lv]["frequency"].sum()
+vomits_before = vom[(vom["onset"] < lv) & (vom["onset"] >= lv - span)]["frequency"].sum()
+cols[1].metric("Vomiting episodes", int(vomits), int(vomits - vomits_before), delta_color="inverse",
+               delta_description=f"vs. previous {span.days} days", border=True)
+
+for i, sym in zip([0, 2, 3], ["nausea", "mouth_sores", "pain"]):
     now  = recent[recent["symptom"] == sym]["severity"].mean()
     before = earlier[earlier["symptom"] == sym]["severity"].mean()
     delta = None if pd.isna(now) or pd.isna(before) else round(now - before, 1)
     if delta is not None:
         deltas[sym] = delta
-    cols[i].metric(sym.replace("_", " ").title(),
-                   "—" if pd.isna(now) else f"{now:.1f}/10",
-                   delta, delta_color="inverse")
+    cols[i].metric(f"{sym.replace('_', ' ').capitalize()} (avg 0–10)",
+                   "—" if pd.isna(now) else f"{now:.1f}",
+                   delta, delta_color="inverse", delta_description="vs. before last visit", border=True)
 
-vomits = recent[recent["symptom"] == "vomiting"]["frequency"].sum()
 wt = p_vit.sort_values("measured_at")
-since = wt[wt["measured_at"] >= pd.Timestamp(last_visit)]
+since = wt[wt["measured_at"] >= lv]
 wt_change = (wt["value"].iloc[-1] - since["value"].iloc[0]) if not since.empty else 0.0
+baseline = wt["value"].iloc[0]                                  # weight at treatment start
+wt_pct_total = (wt["value"].iloc[-1] - baseline) / baseline     # same baseline as the chart's -5% line
 flags = int(recent["needs_review"].sum())
 
 n_new = int(((reps["patient_id"] == pid) & (reps["reported_at"] >= pd.Timestamp(last_visit))).sum())
 worst = max(deltas, key=deltas.get) if deltas and max(deltas.values()) > 0 else None
-st.info(f"Since last visit: **{n_new} new reports**, **{int(vomits)} vomiting episodes**, "
-        f"weight **{wt_change:+.1f} kg**, **{flags} items need review**. "
-        + (f"Biggest change: **{worst.replace('_', ' ')} +{deltas[worst]:.1f}**. " if worst else "")
-        + ("⚠️ Weight loss over 5% — check nutrition." if wt_change / wt['value'].iloc[0] < -0.05 else ""))
+st.info(f"**{n_new} new reports**, **{int(vomits)} vomiting episodes**, "
+        f"weight **{wt_change:+.1f} kg** since last visit (**{wt_pct_total:+.1%}** since treatment start), "
+        f"**{flags} items need review**. "
+        + (f"Biggest change: **{worst.replace('_', ' ')} +{deltas[worst]:.1f}**." if worst else ""),
+        title="Since last visit")
+if wt_pct_total < -0.05:
+    st.error(f"Weight down {abs(wt_pct_total):.1%} since treatment start (alert threshold 5%). Check nutrition.",
+             icon=":material/monitor_weight:")
 
 # ---- chart 1: symptom severity over time, med changes marked ----
 fig = go.Figure()

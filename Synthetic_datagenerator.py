@@ -87,7 +87,8 @@ def main():
                 for _ in range(n_reports):
                     text, labels = make_text(d, worsening)
                     add_report(pid, day, random.choice(["08", "13", "21"]), text, labels)
-            weight -= random.uniform(0.05, 0.35 if worsening else 0.15)
+            # worsening patients lose ~7 kg over 5 weeks (crosses the 5% alert), stable ones ~2 kg
+            weight -= random.uniform(0.05, 0.35) if worsening else random.uniform(0.02, 0.10)
             vitals.append([pid, str(day), "weight_kg", round(weight, 1)])
 
     store["patients"]    = pd.DataFrame(patients, columns=store["patients"].columns)
