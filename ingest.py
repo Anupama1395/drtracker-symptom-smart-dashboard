@@ -258,3 +258,48 @@ def ingest_document(store: dict, patient_id: str, text: str, source: str = "uplo
         except DuplicateReportError as err:
             results.append({"date": day, "report_id": err.report_id, "events": None, "error": str(err)})
     return results
+
+
+# ---------------- bulk import (dashboard multi-file upload + bulk_import.py) ----------------
+def import_files(files: list[tuple[str, bytes]], folder: str = "data", selected_patient: str | None = None,
+                 default_date: datetime | None = None, parse_fn=parse_report, progress=None) -> list[dict]:
+    """Import many .txt/.pdf notes. Per file: read text -> check the patient (header ID vs the selected
+    patient; unknown IDs become new patients from the header) -> one report per 'Date:' section,
+    skipping duplicates. A bad file never stops the batch. Returns one summary row per file."""
+    from schema import load                                  # local import: schema imports nothing from here
+    summary = []
+    for n, (name, data) in enumerate(files, 1):
+        row = {"file": name, "patient": None, "status": "failed", "reports": 0, "events": 0,
+               "duplicates": 0, "detail": ""}
+        try:
+            text = extract_text(name, data)
+            header = read_header(text)
+            if selected_patient and (others := other_patient_ids(text, selected_patient)):
+                raise ValueError(f"names {', '.join(others)} but {selected_patient} is selected")
+            target = selected_patient or header["patient_id"]
+            if not target:
+                raise ValueError("no patient selected and no 'Patient: P###' line")
+            row["patient"] = target
+            store = load(folder)
+            new_patient = target not in set(store["patients"]["patient_id"])
+            if new_patient:
+                store = register_patient(store, header)
+            when = (datetime.combine(pd.Timestamp(header["date"]).date(), datetime.min.time()).replace(hour=12)
+                    if header["date"] else default_date)
+            results = ingest_document(store, target, text, source="upload", reported_at=when,
+                                      folder=folder, parse_fn=parse_fn)
+            added = [r for r in results if not r["error"]]
+            row.update(reports=len(added), events=sum(len(r["events"]) for r in added),
+                       duplicates=len(results) - len(added))
+            if added:
+                row["status"] = "added"
+                row["detail"] = "new patient from header" if new_patient else ""
+            else:
+                row["status"] = "duplicate"
+                row["detail"] = "already imported"
+        except ValueError as err:
+            row["detail"] = str(err)
+        summary.append(row)
+        if progress:
+            progress(n, len(files), row)
+    return summary
