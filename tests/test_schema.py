@@ -145,6 +145,61 @@ def test_upload_adds_report_and_events_for_review(generated):
     assert not any(Path(folder).glob("*.pdf"))                    # the file itself is never stored
 
 
+HEADER_DOC = ("Patient: P007 (Leo Martins) - synthetic test report DOB: 1966-12-03 "
+              "Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-20 Treatment start: 2026-09-21 (radiation + weekly cisplatin) "
+              "Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg Date: 2026-10-14 "
+              "Nausea about 4/10 in the evening. Threw up once after breakfast.")
+
+
+def test_read_header_extracts_identity_dates_and_body():
+    from ingest import read_header
+    h = read_header(HEADER_DOC)
+    assert (h["patient_id"], h["name"], h["dob"]) == ("P007", "Leo Martins", "1966-12-03")
+    assert (h["diagnosis"], h["diagnosis_date"], h["treatment_start"], h["date"]) == \
+        ("Hypopharyngeal SCC", "2026-08-20", "2026-09-21", "2026-10-14")
+    assert h["medications"] == ["cisplatin 40 mg/m2 weekly", "ondansetron 8 mg"]
+    assert h["body"].startswith("Nausea about 4/10")
+    plain = read_header("Nausea 5/10 today.")
+    assert plain["patient_id"] is None and plain["body"] == "Nausea 5/10 today."
+
+
+def test_new_patient_from_document_header(generated):
+    from ingest import read_header, register_patient
+    folder, store = generated
+    store = register_patient(store, read_header(HEADER_DOC))
+    rid, new = ingest_text(store, "P007", HEADER_DOC, reported_at=datetime(2026, 10, 14, 12),
+                           folder=str(folder), parse_fn=regex_fn)
+    saved = load(str(folder))
+    p = saved["patients"].set_index("patient_id").loc["P007"]
+    assert (p["name"], p["treatment_start"]) == ("Leo Martins", "2026-09-21")
+    assert set(saved["medications"][saved["medications"]["patient_id"] == "P007"]["drug"]) == {"cisplatin", "ondansetron"}
+    assert set(new["symptom"]) == {"nausea", "vomiting"}          # header text itself is not symptom-parsed
+    assert saved["reports"].iloc[-1]["raw_text"] == HEADER_DOC    # but the full text is stored unchanged
+
+
+def test_register_patient_needs_a_name():
+    from ingest import read_header, register_patient
+    with pytest.raises(ValueError):
+        register_patient(empty_store(), read_header("Patient: P009 Date: 2026-10-01 Nausea 3/10"))
+
+
+def test_dashboard_opens_with_no_patient_selected(generated, monkeypatch):
+    from streamlit.testing.v1 import AppTest
+    from ingest import event_rows, flag_conflicts, typed_events
+    folder, store = generated
+    rows = []                                                     # the dashboard needs events: build them with regex
+    for _, r in store["reports"].iterrows():
+        rows += event_rows(r.report_id, r.patient_id, r.reported_at, regex_parse(r.raw_text), "rule", len(rows) + 1)
+    store["events"] = flag_conflicts(typed_events(rows, store["events"].columns))
+    app_dir = folder / "app_cwd"
+    save(store, str(app_dir / "data"))                            # app reads ./data relative to the working dir
+    monkeypatch.chdir(app_dir)
+    at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60).run()
+    assert not at.exception
+    assert at.sidebar.selectbox[0].value is None                  # no patient picked by default
+    assert len(at.dataframe[0].value) == 5                        # patient list instead
+
+
 def test_upload_works_when_dates_were_converted_for_display(generated):
     """Regression: the dashboard turns date columns into Timestamps; saving must still work
     (sqlite3 rejects Timestamp objects) and keep one ISO text format in every file."""

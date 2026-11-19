@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import streamlit as st
 from plotly.subplots import make_subplots
 
-from ingest import extract_text, ingest_text, other_patient_ids
+from ingest import extract_text, ingest_text, other_patient_ids, read_header, register_patient
 from schema import load
 
 st.set_page_config(page_title="Dr.Tracker — Pre-visit view", layout="wide")
@@ -42,40 +42,91 @@ for col in ["diagnosis_date", "first_visit_date", "treatment_start"]:
 as_of = max(reps["reported_at"].max(), vit["measured_at"].max()).normalize()
 
 # ---------------- sidebar ----------------
+labels = (pts["patient_id"] + " — " + pts["name"]).tolist()
+if pending := st.session_state.pop("select_patient", None):   # set by an upload, applied before the widget exists
+    st.session_state.patient = next((l for l in labels if l.startswith(pending)), None)
+
 with st.sidebar:
     if msg := st.session_state.pop("upload_msg", None):
         st.success(msg, icon=":material/check_circle:")
-    pid = st.selectbox("Patient", pts["patient_id"] + " — " + pts["name"]).split(" — ")[0]
+    choice = st.selectbox("Patient", labels, index=None, placeholder="Choose a patient…", key="patient")
+    pid = choice.split(" — ")[0] if choice else None
 
-    p_visits = visits[(visits["patient_id"] == pid) & (visits["visit_date"] <= as_of)].sort_values("visit_date")
-    default_lv = p_visits["visit_date"].iloc[-1] if len(p_visits) else as_of - pd.Timedelta(days=14)
-    last_visit = st.date_input("Last visit", value=default_lv.date(), key=f"last_visit_{pid}",
-                               help="Defaults to the most recent visit on record; change it to compare another window.")
-    full_history = st.toggle("Show full history on chart", help="Zoom out to diagnosis, staging and first consult.")
+    if pid:
+        p_visits = visits[(visits["patient_id"] == pid) & (visits["visit_date"] <= as_of)].sort_values("visit_date")
+        default_lv = p_visits["visit_date"].iloc[-1] if len(p_visits) else as_of - pd.Timedelta(days=14)
+        last_visit = st.date_input("Last visit", value=default_lv.date(), key=f"last_visit_{pid}",
+                                   help="Defaults to the most recent visit on record; change it to compare another window.")
+        full_history = st.toggle("Show full history on chart", help="Zoom out to diagnosis, staging and first consult.")
 
     st.divider()
     st.subheader("Add a patient document")
     st.warning("Synthetic data only. Never upload real patient information.", icon=":material/warning:")
     upload = st.file_uploader("Patient note (.txt or .pdf)", type=["txt", "pdf"],
                               key=f"upload_{st.session_state.upload_n}")
-    doc_date = st.date_input("Document date", value=as_of.date(), key="doc_date")
-    if st.button("Parse and add as report", disabled=upload is None, width="stretch",
-                 icon=":material/upload_file:"):
+    text = header = None
+    if upload is not None:
         try:
             text = extract_text(upload.name, upload.getvalue())   # only the text is kept, never the file
-            if others := other_patient_ids(text, pid):
+            header = read_header(text)
+        except ValueError as err:
+            st.error(str(err))
+    target = pid or (header or {}).get("patient_id")
+    if header:
+        if not target:
+            st.caption("No patient selected and no 'Patient: P###' line in the document.")
+        elif target in set(pts["patient_id"]):
+            st.caption(f"Will be filed under **{target}**.")
+        else:
+            st.caption(f"Will be filed under **{target}**, a new patient "
+                       f"(**{header['name'] or 'name missing'}**) created from the document header.")
+    doc_default = pd.Timestamp(header["date"]).date() if header and header["date"] else as_of.date()
+    doc_date = st.date_input("Document date", value=doc_default,
+                             key=f"doc_date_{st.session_state.upload_n}_{upload.name if upload else ''}",
+                             help="Taken from the document's 'Date:' line when it has one.")
+    if st.button("Parse and add as report", disabled=text is None, width="stretch",
+                 icon=":material/upload_file:"):
+        try:
+            if pid and (others := other_patient_ids(text, pid)):
                 raise ValueError(f"This document mentions {', '.join(others)}, but {pid} is selected. "
-                                 f"Nothing was saved. Select the right patient and upload again.")
+                                 f"Nothing was saved. Select the right patient (or none) and upload again.")
+            if not target:
+                raise ValueError("Choose a patient, or add a line like 'Patient: P007 (Name)' to the document.")
+            fresh = load()             # from disk: the tables above were converted to datetimes for display
+            is_new = target not in set(fresh["patients"]["patient_id"])
+            if is_new:
+                fresh = register_patient(fresh, header)
             with st.spinner("Parsing…"):
-                # fresh copy from disk: the tables above were converted to datetimes for display
-                rid, new = ingest_text(load(), pid, text, source="upload",
+                rid, new = ingest_text(fresh, target, text, source="upload",
                                        reported_at=datetime.combine(doc_date, time(12, 0)))
-            st.session_state.upload_msg = (f"Report {rid} added for {pid}: {len(new)} symptom event(s), "
-                                           f"all sent to the review queue.")
+            st.session_state.upload_msg = (
+                (f"New patient {target} ({header['name']}) registered from the document. " if is_new else "")
+                + f"Report {rid} added for {target}: {len(new)} symptom event(s), all sent to the review queue.")
             st.session_state.upload_n += 1
+            st.session_state.select_patient = target
             st.rerun()
         except ValueError as err:
             st.error(str(err))
+
+# ---------------- no patient chosen: patient list ----------------
+if not pid:
+    st.title("Dr.Tracker — pre-visit view")
+    st.info("Choose a patient in the sidebar to open their pre-visit summary.", icon=":material/person_search:")
+    roster = []
+    for _, p in pts.iterrows():
+        w = vit[(vit["patient_id"] == p["patient_id"]) & (vit["kind"] == "weight_kg")].sort_values("measured_at")
+        e = ev[ev["patient_id"] == p["patient_id"]]
+        roster.append({
+            "Patient": f"{p['patient_id']} — {p['name']}", "Diagnosis": p["diagnosis"],
+            "Treatment start": p["treatment_start"],
+            "Last report": reps[reps["patient_id"] == p["patient_id"]]["reported_at"].max(),
+            "Weight since start": (w["value"].iloc[-1] / w["value"].iloc[0] - 1) if len(w) > 1 else None,
+            "Items needing review": int(e["needs_review"].sum())})
+    st.dataframe(pd.DataFrame(roster), hide_index=True, alt="All patients",
+                 column_config={"Treatment start": st.column_config.DateColumn(),
+                                "Last report": st.column_config.DatetimeColumn(format="MMM D, YYYY"),
+                                "Weight since start": st.column_config.NumberColumn(format="percent")})
+    st.stop()
 
 lv = pd.Timestamp(last_visit)
 p_ev = ev[ev["patient_id"] == pid]
