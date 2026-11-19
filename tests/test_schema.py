@@ -145,6 +145,23 @@ def test_upload_adds_report_and_events_for_review(generated):
     assert not any(Path(folder).glob("*.pdf"))                    # the file itself is never stored
 
 
+def test_upload_works_when_dates_were_converted_for_display(generated):
+    """Regression: the dashboard turns date columns into Timestamps; saving must still work
+    (sqlite3 rejects Timestamp objects) and keep one ISO text format in every file."""
+    folder, store = generated
+    store["reports"]["reported_at"] = pd.to_datetime(store["reports"]["reported_at"])
+    store["visits"]["visit_date"] = pd.to_datetime(store["visits"]["visit_date"])
+    store["medications"]["end_date"] = pd.to_datetime(store["medications"]["end_date"])
+    ingest_text(store, "P001", "Nausea about 6/10 after lunch.", reported_at=datetime(2026, 10, 11, 12),
+                folder=str(folder), parse_fn=regex_fn)
+
+    reported = pd.read_csv(folder / "reports.csv")["reported_at"]
+    assert reported.str.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}").all()
+    assert pd.read_csv(folder / "visits.csv")["visit_date"].str.fullmatch(r"\d{4}-\d{2}-\d{2}").all()
+    with sqlite3.connect(folder / "drtracker.db") as conn:
+        assert conn.execute("SELECT COUNT(*) FROM reports WHERE source='upload'").fetchone()[0] == 1
+
+
 # ---------------- FHIR import ----------------
 def test_fhir_bundle_maps_onto_our_tables():
     rows = import_from_source(BUNDLE)

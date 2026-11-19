@@ -1,6 +1,7 @@
 # ingest.py — turning text into stored reports + events. Shared by the batch pipeline
 # (pipeline_runner.py) and the dashboard's document upload.
 import io
+import re
 from datetime import datetime, timedelta
 from typing import Callable
 
@@ -85,6 +86,12 @@ def extract_text(filename: str, data: bytes) -> str:
     if not text:
         raise ValueError("No text found in the file (scanned PDFs need OCR, which isn't supported).")
     return text[:MAX_UPLOAD_CHARS]
+
+
+def other_patient_ids(text: str, patient_id: str) -> list[str]:
+    """Patient IDs (P###) written in the document that are NOT the selected patient.
+    Filing a note on the wrong chart is a real clinical risk, so the upload refuses these."""
+    return sorted(set(re.findall(r"\bP\d{3}\b", text)) - {patient_id})
 
 
 def ingest_text(store: dict, patient_id: str, text: str, source: str = "upload",

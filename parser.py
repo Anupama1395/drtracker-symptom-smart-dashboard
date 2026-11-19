@@ -3,6 +3,7 @@ import re
 import json
 from typing import Optional, List, Literal
 
+import httpx
 import ollama
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
@@ -49,9 +50,10 @@ Rules:
 - If nothing clinical is reported, return {"events": []}."""
 
 MODEL = "llama3.1:8b"
+CLIENT = ollama.Client(timeout=120)      # a hung server becomes a timeout -> fallback, not a frozen run
 
 def call_llm(text: str) -> dict:
-    resp = ollama.chat(
+    resp = CLIENT.chat(
         model=MODEL,
         format="json",
         options={"temperature": 0},
@@ -139,7 +141,8 @@ def regex_parse(text: str) -> Extraction:
             symptom=sym,
             severity=0 if negated else severity,
             frequency=0 if negated else freq,
-            onset_offset_days=-1 if re.search(r"last night|yesterday", text, re.I) else 0,
+            # only the symptom's own sentence: "Vomited yesterday. Pain 7/10." keeps pain on today
+            onset_offset_days=-1 if re.search(r"last night|yesterday", window, re.I) else 0,
             related_med="cisplatin" if re.search(r"chemo|infusion", window, re.I) else None,
             confidence=0.5, evidence=window.strip(),
         ))
@@ -149,9 +152,13 @@ def regex_parse(text: str) -> Extraction:
 
 
 # ---------------- part 5: entry point ----------------
-# ConnectionError / ResponseError = Ollama not running or model not pulled -> still fall back
+# Any way the LLM can fail -> fall back instead of crashing the batch:
+#   ValidationError / JSONDecodeError / KeyError  -> bad output
+#   ConnectionError                               -> Ollama not running
+#   ollama.ResponseError                          -> model not pulled / server error
+#   httpx.HTTPError                               -> connection reset, timeout (e.g. Ollama crash-looping)
 LLM_ERRORS = (ValidationError, json.JSONDecodeError, KeyError,
-              ConnectionError, ollama.ResponseError)
+              ConnectionError, ollama.ResponseError, httpx.HTTPError)
 
 def parse_report(text: str) -> tuple[Extraction, str]:
     """Returns (extraction, extracted_by). Falls back to regex if the LLM fails."""

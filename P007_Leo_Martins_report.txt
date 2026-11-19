@@ -1,0 +1,14 @@
+Patient: P007 (Leo Martins) - synthetic test report
+DOB: 1966-12-03
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-20
+Treatment start: 2026-09-21 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-14
+Nausea about 4/10 in the evening.
+Threw up once after breakfast.
+Mouth sores mild.
+Throat pain around 8/10, worse when swallowing.
+Swallowing is very hard, only managing soft food.
+Exhausted most of the day.
+No fever.

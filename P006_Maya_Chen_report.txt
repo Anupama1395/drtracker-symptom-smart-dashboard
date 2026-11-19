@@ -1,0 +1,14 @@
+Patient: P006 (Maya Chen) - synthetic test report
+DOB: 1972-04-09
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-14
+Treatment start: 2026-09-14 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-12
+Nausea around 6/10 after lunch, felt queasy most of the day.
+Vomited three times yesterday.
+Mouth sores moderate, sore on the side of my tongue.
+Pain about 7/10 when eating.
+Trouble swallowing pills, had to crush them.
+Very tired, napped twice.
+No vomiting this morning.

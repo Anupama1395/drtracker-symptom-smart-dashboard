@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import streamlit as st
 from plotly.subplots import make_subplots
 
-from ingest import extract_text, ingest_text
+from ingest import extract_text, ingest_text, other_patient_ids
 from schema import load
 
 st.set_page_config(page_title="Dr.Tracker — Pre-visit view", layout="wide")
@@ -63,8 +63,12 @@ with st.sidebar:
                  icon=":material/upload_file:"):
         try:
             text = extract_text(upload.name, upload.getvalue())   # only the text is kept, never the file
+            if others := other_patient_ids(text, pid):
+                raise ValueError(f"This document mentions {', '.join(others)}, but {pid} is selected. "
+                                 f"Nothing was saved. Select the right patient and upload again.")
             with st.spinner("Parsing…"):
-                rid, new = ingest_text(store, pid, text, source="upload",
+                # fresh copy from disk: the tables above were converted to datetimes for display
+                rid, new = ingest_text(load(), pid, text, source="upload",
                                        reported_at=datetime.combine(doc_date, time(12, 0)))
             st.session_state.upload_msg = (f"Report {rid} added for {pid}: {len(new)} symptom event(s), "
                                            f"all sent to the review queue.")

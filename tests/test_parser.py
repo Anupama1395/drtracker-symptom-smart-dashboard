@@ -33,6 +33,19 @@ def test_last_night_sets_onset_to_previous_day_and_links_chemo():
     assert row["onset"] == "2026-09-09"                                       # stored on the day it happened
 
 
+def test_yesterday_only_moves_its_own_sentence():
+    ev = by_symptom(regex_parse("Vomited three times yesterday. Pain about 7/10 when eating."))
+    assert ev["vomiting"].onset_offset_days == -1
+    assert ev["pain"].onset_offset_days == 0
+
+
+def test_upload_refuses_document_for_another_patient():
+    from ingest import other_patient_ids
+    assert other_patient_ids("Patient: P006 (Maya Chen) ... nausea 6/10", "P001") == ["P006"]
+    assert other_patient_ids("Patient: P001, nausea 6/10", "P001") == []
+    assert other_patient_ids("Nausea 6/10, no ID written", "P001") == []
+
+
 @pytest.mark.parametrize("text, expected", [
     ("Throat pain is severe today.", 8),
     ("Pain is mild today.", 3),
@@ -98,6 +111,16 @@ def test_llm_down_falls_back_to_regex_and_flags_everything(monkeypatch):
     ext, by = parse_report("Nausea about 6/10 today.")
     assert by == "rule"
     assert all(e.needs_review and e.flags == ["llm_failed:ConnectionError"] for e in ext.events)
+
+
+def test_connection_reset_falls_back(monkeypatch):
+    """Regression: a crash-looping Ollama resets the connection (httpx.ReadError)."""
+    import httpx
+    def reset(_):
+        raise httpx.ReadError("[Errno 54] Connection reset by peer")
+    monkeypatch.setattr(parser, "call_llm", reset)
+    ext, by = parse_report("Nausea about 6/10 today.")
+    assert by == "rule" and ext.events[0].flags == ["llm_failed:ReadError"]
 
 
 def test_out_of_range_llm_output_is_rejected(monkeypatch):
