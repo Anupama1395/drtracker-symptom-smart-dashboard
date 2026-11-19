@@ -1,6 +1,6 @@
-# Dr.Tracker: patient-reported symptoms, from free text to a 30-second pre-visit view
+# SymptomLens: patient-reported symptoms, from free text to a 30-second pre-visit view
 
-This is Track B (Patient-Reported Data: Store, Manage & Chart). It is modelled on the **oncology demo**: patients on head-and-neck chemoradiation write daily notes about nausea, vomiting, mouth sores, pain, swallowing and fatigue.
+SymptomLens is my prototype for Track B (Patient-Reported Data: Store, Manage & Chart) of the Pipeline Securities Dr.Tracker assessment. It is modelled on the **oncology demo**: patients on head-and-neck chemoradiation write daily notes about nausea, vomiting, mouth sores, pain, swallowing and fatigue.
 
 The prototype has five parts:
 

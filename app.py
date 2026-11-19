@@ -1,4 +1,4 @@
-# app.py — Dr.Tracker pre-visit view: "what changed since the last visit?"
+# app.py — SymptomLens pre-visit view: "what changed since the last visit?"
 # Presentation only: all data comes from schema.load(); uploads go through ingest.py.
 import html
 from datetime import datetime, time
@@ -13,7 +13,7 @@ from pdf_summary import summary_pdf
 from review import accept, dismiss, edit, ensure_review_columns, export_gold
 from schema import SYMPTOMS, load, load_corrections, save, save_corrections
 
-st.set_page_config(page_title="Dr.Tracker — Pre-visit view", page_icon=":material/monitor_heart:", layout="wide")
+st.set_page_config(page_title="SymptomLens — Pre-visit view", page_icon=":material/monitor_heart:", layout="wide")
 
 # ---------------- design tokens ----------------
 TEAL, TEXT, MUTED, BORDER = "#0F766E", "#1F2937", "#6B7280", "#E5E7EB"
@@ -259,7 +259,7 @@ def pick(label):
 
 
 with st.sidebar:
-    st.markdown(f"### :material/monitor_heart: Dr.Tracker")
+    st.markdown("### :material/monitor_heart: SymptomLens")
     st.caption("Pre-visit view · oncology")
     if msg := st.session_state.pop("review_msg", None):
         st.toast(msg, icon=":material/task_alt:")
@@ -368,7 +368,7 @@ with st.container(border=True, key="card_summary"):
       <li><b class="action">Action:</b> {esc(sentence(action, 'No action items.'))}</li></ul>""")
 
     pdf_lines = [
-        "# Dr.Tracker pre-visit summary",
+        "# SymptomLens pre-visit summary",
         f"{pt['name']} ({pid}), age {age} - {pt['diagnosis']}",
         f"{tx} - Status: {status_label} ({S['reason']})",
         f"Since last visit {fmt_dy(lv)}, as of {fmt_dy(as_of)}",
