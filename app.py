@@ -10,8 +10,8 @@ from plotly.subplots import make_subplots
 
 from ingest import extract_text, ingest_text, other_patient_ids, read_header, register_patient
 from pdf_summary import summary_pdf
-from review import accept, dismiss, edit, ensure_review_columns, export_gold
-from schema import SYMPTOMS, load, load_corrections, save, save_corrections
+from review import apply_action, ensure_review_columns, export_gold, undo_last
+from schema import SYMPTOMS, load, load_corrections
 
 st.set_page_config(page_title="SymptomLens — Pre-visit view", page_icon=":material/monitor_heart:", layout="wide")
 
@@ -86,10 +86,20 @@ def flag_pills(flags: str) -> str:
 
 
 def review_action(kind, event_id, symptom):
-    """Accept / Dismiss button callback: apply to a fresh copy from disk and save."""
-    fresh = load()
-    save((accept if kind == "accept" else dismiss)(fresh, event_id))
-    st.session_state.review_msg = f"{'Accepted' if kind == 'accept' else 'Dismissed'} {nice(symptom)} (event {event_id})."
+    """Accept / Dismiss button callback: saves only this event's row + one review-log entry."""
+    try:
+        done = apply_action(kind, "data", event_id, st.session_state.get("reviewer", ""))
+        st.session_state.review_msg = f"{done.capitalize()}ed {nice(symptom)} (event {event_id})." \
+            if done != "dismiss" else f"Dismissed {nice(symptom)} (event {event_id})."
+    except ValueError as err:
+        st.session_state.review_err = str(err)
+
+
+def undo_action(event_id):
+    try:
+        st.session_state.review_msg = undo_last("data", event_id, st.session_state.get("reviewer", ""))
+    except ValueError as err:
+        st.session_state.review_err = str(err)
 
 
 # ---------------- load ----------------
@@ -263,6 +273,10 @@ with st.sidebar:
     st.caption("Pre-visit view · oncology")
     if msg := st.session_state.pop("review_msg", None):
         st.toast(msg, icon=":material/task_alt:")
+    if msg := st.session_state.pop("review_err", None):
+        st.error(msg, icon=":material/error:")
+    st.text_input("Reviewer name", key="reviewer", placeholder="e.g. Dr. Chen", icon=":material/badge:",
+                  help="Saved with every Accept / Edit / Dismiss / Undo, so each decision is attributed.")
     if msg := st.session_state.pop("upload_msg", None):
         st.success(msg, icon=":material/check_circle:")
 
@@ -307,6 +321,47 @@ if not pid:
                                                                         help="Weight change since treatment start"),
                                 "To review": st.column_config.NumberColumn(width="small", help="Items needing review since last visit")})
     st.info("Choose a patient in the sidebar to open their pre-visit summary.", icon=":material/person_search:")
+
+    with st.container(border=True, key="card_inbox"):
+        inbox = ev_all[ev_all["review_status"] == "pending"].merge(
+            reps[["report_id", "raw_text"]], on="report_id", how="left").merge(
+            pts[["patient_id", "name"]], on="patient_id", how="left")
+        st.markdown(f"**Review inbox** · {plural(len(inbox), 'pending item')} across all patients")
+        if inbox.empty:
+            st.caption("Nothing is waiting for review.")
+        else:
+            inbox["why"] = inbox["flags"].map(lambda f: ", ".join(dict.fromkeys(
+                (FLAG_LABELS.get(x, ("LLM unavailable", "")) if x.startswith("llm_failed") else
+                 FLAG_LABELS.get(x, (x.replace("_", " "), "")))[0] for x in str(f).split(";") if x)) or "Low confidence")
+            f1, f2, f3 = st.columns([2, 2, 2], vertical_alignment="bottom")
+            reasons = sorted({r for w in inbox["why"] for r in w.split(", ")})
+            pick_reasons = f1.multiselect("Flag", reasons, placeholder="Any flag")
+            pick_pts = f2.multiselect("Patient", sorted(inbox["patient_id"].unique()), placeholder="Any patient")
+            d0, d1 = inbox["onset"].min().date(), inbox["onset"].max().date()
+            span_in = f3.date_input("Dates", value=(d0, d1), min_value=d0, max_value=d1)
+            view = inbox
+            if pick_reasons:
+                view = view[view["why"].map(lambda w: any(r in w for r in pick_reasons))]
+            if pick_pts:
+                view = view[view["patient_id"].isin(pick_pts)]
+            if isinstance(span_in, (list, tuple)) and len(span_in) == 2:
+                view = view[(view["onset"].dt.date >= span_in[0]) & (view["onset"].dt.date <= span_in[1])]
+            view = view.sort_values("onset", ascending=False)
+            sel = st.dataframe(view[["onset", "patient_id", "name", "symptom", "severity", "why", "raw_text"]],
+                               hide_index=True, on_select="rerun", selection_mode="single-row",
+                               key=f"inbox_table_{st.session_state.get('inbox_n', 0)}",   # fresh key = selection cleared
+                               alt="Pending review items across all patients",
+                               column_config={"onset": st.column_config.DateColumn("Date", format="MMM D"),
+                                              "patient_id": "ID", "name": "Patient", "symptom": "Symptom",
+                                              "severity": "Severity", "why": "Why flagged",
+                                              "raw_text": st.column_config.TextColumn("Patient's words", width="large")})
+            st.caption(f"Showing {len(view)} of {len(inbox)}. Select a row to open that patient's Reports tab.")
+            rows = sel.selection.rows if sel is not None and hasattr(sel, "selection") else []
+            if rows:
+                st.session_state.select_patient = view.iloc[rows[0]]["patient_id"]
+                st.session_state.inbox_n = st.session_state.get("inbox_n", 0) + 1   # so going back doesn't re-open it
+                st.rerun()
+
     with st.container(border=True, key="card_upload_home"):
         upload_panel(None)
     st.stop()
@@ -639,9 +694,8 @@ with tab_rep:
                                                            value=None if pd.isna(r["frequency"]) else int(r["frequency"]))
                                     if st.form_submit_button("Save correction", type="primary", width="stretch"):
                                         try:
-                                            fresh, corr = edit(load(), load_corrections(), eid, sym, sev, freq)
-                                            save(fresh)
-                                            save_corrections(corr)
+                                            apply_action("edit", "data", eid, st.session_state.get("reviewer", ""),
+                                                         symptom=sym, severity=sev, frequency=freq)
                                             st.session_state.review_msg = f"Saved correction to {nice(sym)} (event {eid})."
                                             st.rerun()
                                         except ValueError as err:
@@ -655,11 +709,20 @@ with tab_rep:
             if done.empty:
                 st.caption("Nothing reviewed yet for this patient.")
             else:
+                st.markdown("**Recent decisions** · Undo reverts the last action on an item and logs it")
+                for _, d in done.sort_values("reviewed_at", ascending=False).head(8).iterrows():
+                    c_d, c_u = st.columns([5, 1], vertical_alignment="center")
+                    c_d.caption(f"{esc(str(d['reviewed_at'])[:16].replace('T', ' '))} · **{d['review_status']}** · "
+                                f"{nice(d['symptom'])}" + ("" if pd.isna(d['severity']) else f" {d['severity']:.0f}/10")
+                                + (f" · by {d['reviewed_by']}" if isinstance(d.get('reviewed_by'), str) else "")
+                                + f" · event {d['event_id']}")
+                    c_u.button("Undo", key=f"undo_{d['event_id']}", icon=":material/undo:", width="stretch",
+                               on_click=undo_action, args=(d["event_id"],))
                 st.dataframe(done.merge(reps[["report_id", "raw_text"]], on="report_id", how="left")
                              .sort_values("reviewed_at", ascending=False)[
-                                 ["reviewed_at", "review_status", "symptom", "severity", "frequency", "raw_text"]],
+                                 ["reviewed_at", "reviewed_by", "review_status", "symptom", "severity", "frequency", "raw_text"]],
                              hide_index=True, alt="Reviewed items",
-                             column_config={"reviewed_at": "Reviewed", "review_status": "Decision",
+                             column_config={"reviewed_at": "Reviewed", "reviewed_by": "By", "review_status": "Decision",
                                             "symptom": "Symptom", "severity": "Severity", "frequency": "Count",
                                             "raw_text": st.column_config.TextColumn("Patient's words", width="large")})
                 mine = corrections[corrections["event_id"].astype(str).isin(done["event_id"].astype(str))]
@@ -668,7 +731,7 @@ with tab_rep:
                     st.dataframe(mine.sort_values("corrected_at", ascending=False), hide_index=True,
                                  alt="Corrections log", column_config={
                                      "event_id": "Event", "field": "Field", "old_value": "Was",
-                                     "new_value": "Now", "corrected_at": "When"})
+                                     "new_value": "Now", "corrected_at": "When", "reviewed_by": "By"})
         c1, c2 = st.columns([3, 2], vertical_alignment="center")
         c1.caption(f"{plural(int(ev_all['review_status'].isin(['accepted', 'edited', 'dismissed']).sum()), 'decision')} "
                    f"across all patients · {plural(len(corrections), 'field correction')}. Fully reviewed reports "

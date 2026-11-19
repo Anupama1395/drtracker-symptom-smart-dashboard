@@ -61,7 +61,8 @@ events_cols = [
 corrections_cols = ["event_id", "field", "old_value", "new_value", "corrected_at", "reviewed_by"]
 
 # Append-only log of every review action (accept / edit / dismiss / undo). Never updated or deleted.
-review_log_cols = ["log_id", "event_id", "action", "from_status", "to_status", "reviewed_by", "at"]
+review_log_cols = ["log_id", "event_id", "action", "from_status", "to_status", "reviewed_by", "at",
+                   "details"]   # JSON: previous extracted_by for edits, {"undoes": log_id} for undo
 
 # One row per measurement
 vitals_cols = ["patient_id", "measured_at", "kind", "value"]
@@ -104,7 +105,7 @@ def storable(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # Columns that must come back as integers (CSV/SQLite turn int + NULL into float: 1 -> 1.0)
-INT_COLS = {"events": ["frequency", "parse_ms"], "reports": ["report_id"]}
+INT_COLS = {"events": ["frequency", "parse_ms"], "reports": ["report_id"], "review_log": ["log_id"]}
 BOOL_COLS = {"events": ["needs_review"]}
 EXTRA_TABLES = {"corrections": corrections_cols, "review_log": review_log_cols}
 
@@ -187,13 +188,22 @@ def load(folder="data"):
 
 
 # ---------------- row-level writes (review clicks, logs): no full rewrite ----------------
+def _sql_value(v):
+    """Python-native value for sqlite3: numpy ints/bools would otherwise be stored as raw bytes."""
+    if v is None or v is pd.NA or (not isinstance(v, str) and pd.isna(v)):
+        return None
+    if hasattr(v, "item"):                       # numpy scalar -> int / float / bool
+        v = v.item()
+    if isinstance(v, bool):
+        return int(v)
+    return _iso(v)
+
+
 def update_rows(table, key_col, key_value, fields: dict, folder="data"):
     """UPDATE one table's matching rows in a single transaction."""
     if not fields:
         return 0
-    vals = [_iso(v) if not (v is None or (not isinstance(v, str) and pd.isna(v))) else None
-            for v in fields.values()]
-    vals = [int(v) if isinstance(v, bool) else v for v in vals]
+    vals = [_sql_value(v) for v in fields.values()]
     sets = ", ".join(f'"{c}" = ?' for c in fields)
     with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
         existing = {r[1] for r in conn.execute(f'PRAGMA table_info("{table}")')}
@@ -238,9 +248,14 @@ def load_review_log(folder="data"):
 
 
 def clear_review_history(folder="data"):
-    """Used only when synthetic data is regenerated: old logs would point at events that no longer exist."""
-    for name, cols in EXTRA_TABLES.items():
-        _save_extra(name, pd.DataFrame(columns=cols), folder)
+    """Used only when synthetic data is regenerated: old logs would point at events that no longer exist.
+    Tables are dropped (not emptied) so the next append creates them with the right column types."""
+    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+        for name in EXTRA_TABLES:
+            conn.execute(f'DROP TABLE IF EXISTS "{name}"')
+    for name in EXTRA_TABLES:
+        if os.path.exists(csv := os.path.join(folder, f"{name}.csv")):
+            os.remove(csv)
 
 
 def connect(folder="data"):
