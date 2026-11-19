@@ -1,4 +1,29 @@
+# Python
 .venv/
+venv/
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Secrets / local config (never commit credentials)
+.env
+.env.*
+.streamlit/secrets.toml
+
+# Editor / OS
 .DS_Store
+.vscode/
+.idea/
+
+# AI-assistant tooling (not part of the prototype)
+.claude/
+.agents/
+
+# Logs and scratch
+*.log
+tmp/
+
+# NOTE: data/ is committed on purpose so the dashboard opens instantly in the demo.
+# It is 100% synthetic (Synthetic_datagenerator.py); never put real patient data here.
