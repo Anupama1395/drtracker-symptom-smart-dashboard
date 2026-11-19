@@ -65,7 +65,7 @@ COLUMNS = {
     "vitals": vitals_cols,
 }
 TABLES = list(COLUMNS)
-DB_NAME = "drtracker.db"
+DB_NAME = "symptomlens.db"
 
 
 def empty_store():

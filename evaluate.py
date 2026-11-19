@@ -40,8 +40,11 @@ def score_silver(events_path="data/events.csv", labels_path="data/silver_labels.
     ev = pd.read_csv(events_path)
     labels = pd.read_csv(labels_path)
     report_ids = pd.read_csv(reports_path)["report_id"]
+    # Score only reports that have BOTH parser output and a generator label: the pipeline may have
+    # run on a subset, and uploaded/imported reports have no template label to compare against.
+    ev = ev[ev["report_id"].isin(set(labels["report_id"]))]
     parsed = set(ev["report_id"])
-    labels = labels[labels["report_id"].isin(parsed)]          # pipeline may have run on a subset
+    labels = labels[labels["report_id"].isin(parsed)]
     pred = set(zip(ev["report_id"], ev["symptom"]))
     truth = set(zip(labels["report_id"], labels["symptom"]))
     tp = len(pred & truth)

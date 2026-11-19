@@ -6,13 +6,15 @@ The prototype has five parts:
 
 1. **Generate:** 5 fictional patients. Each has a full care history (biopsy, first consult, staging, treatment start on Sep 7, weekly visits), 5 weeks of free-text reports (about 166), daily weights, and an antiemetic switch on day 21 for the two patients who get worse.
 2. **Parse:** each report goes to a local LLM (Ollama, `llama3.1:8b`, JSON output). Pydantic then validates the output against the schema, and deterministic rule checks run on it. If the LLM fails, a regex parser takes over.
-3. **Store:** 7 tables in CSV, mirrored into SQLite (`data/drtracker.db`). The queries are plain SQL.
+3. **Store:** 7 tables in CSV, mirrored into SQLite (`data/symptomlens.db`). The queries are plain SQL.
 4. **Show:** a Streamlit pre-visit dashboard answering *"what changed since the last visit?"*, with the patient's history alongside.
 5. **Bring data in:** upload a patient note (.txt or .pdf) from the dashboard, or import a FHIR Bundle with a stub importer.
 
 All data is synthetic. No real patient information is used anywhere.
 
 ## How to run it
+
+Full step-by-step instructions, including the background restart and the daily 1:22 AM auto-restart, are in **[RUN.md](RUN.md)**. In short:
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
@@ -23,7 +25,7 @@ python pipeline_runner.py            # generate the data, parse every report, sa
 python Queries.py                    # the SQL queries
 python evaluate.py                   # parser accuracy: LLM vs regex
 python -m pytest                     # 59 tests, no LLM needed
-streamlit run app.py                 # dashboard
+./scripts/run.sh                     # dashboard at http://localhost:8501 (same as: streamlit run app.py)
 python importer.py samples/fhir_bundle_P006.json          # preview a FHIR import (add --save to merge it into data/)
 ```
 

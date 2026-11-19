@@ -1,4 +1,4 @@
-# Queries.py — the "useful queries" deliverable, in plain SQL over data/drtracker.db
+# Queries.py — the "useful queries" deliverable, in plain SQL over data/symptomlens.db
 import pandas as pd
 from schema import connect
 

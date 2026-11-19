@@ -27,3 +27,6 @@ tmp/
 
 # NOTE: data/ is committed on purpose so the dashboard opens instantly in the demo.
 # It is 100% synthetic (Synthetic_datagenerator.py); never put real patient data here.
+
+# Runtime logs (scripts/restart.sh)
+logs/
