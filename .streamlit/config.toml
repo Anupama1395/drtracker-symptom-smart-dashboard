@@ -1,0 +1,22 @@
+[theme]
+base = "light"
+primaryColor = "#0F766E"
+linkColor = "#0F766E"
+backgroundColor = "#F7F9FC"
+secondaryBackgroundColor = "#F1F5F9"
+textColor = "#1F2937"
+borderColor = "#E5E7EB"
+showWidgetBorder = true
+baseRadius = "12px"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+metricValueFontSize = "1.6rem"
+metricValueFontWeight = 600
+# Okabe-Ito (colourblind-safe), vermillion/red left out: red is reserved for alerts
+chartCategoricalColors = ["#0072B2", "#E69F00", "#CC79A7", "#009E73", "#56B4E9", "#F0E442", "#000000"]
+
+[theme.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F1F5F9"
+
+[client]
+toolbarMode = "minimal"
