@@ -1,0 +1,167 @@
+report_id,patient_id,reported_at,source,raw_text
+1,P001,2026-09-07T21:47:00,free_text,"Swallowing is getting harder, choked on water once."
+2,P001,2026-09-07T21:27:00,free_text,Vomited once last night after the chemo infusion.
+3,P001,2026-09-08T21:41:00,free_text,"Pain in my throat around 2/10, took the lidocaine rinse twice."
+4,P001,2026-09-08T08:28:00,free_text,Vomited once last night after the chemo infusion.
+5,P001,2026-09-09T13:17:00,free_text,"Threw up 2 times after dinner, felt nauseous all morning."
+6,P001,2026-09-10T08:24:00,free_text,"Really wiped out today, slept most of the afternoon."
+7,P001,2026-09-11T21:07:00,free_text,"Throat pain is severe today, could barely talk."
+8,P001,2026-09-12T21:39:00,free_text,Vomited once last night after the chemo infusion.
+9,P001,2026-09-13T13:05:00,free_text,"Pain in my throat around 2/10, took the lidocaine rinse twice."
+10,P001,2026-09-14T13:40:00,free_text,No vomiting today. Nausea mild.
+11,P001,2026-09-16T21:46:00,free_text,"No mouth sores, but pain about 2/10 when I swallow."
+12,P001,2026-09-17T21:35:00,free_text,"Swallowing is getting harder, choked on water once."
+13,P001,2026-09-18T13:17:00,free_text,"Threw up 2 times after dinner, felt nauseous all morning."
+14,P001,2026-09-19T13:13:00,free_text,"Throat pain is severe today, could barely talk."
+15,P001,2026-09-20T21:35:00,free_text,"No mouth sores, but pain about 3/10 when I swallow."
+16,P001,2026-09-21T13:23:00,free_text,No vomiting today. Nausea mild.
+17,P001,2026-09-22T08:40:00,free_text,Vomited once last night after the chemo infusion.
+18,P001,2026-09-23T13:24:00,free_text,"Throat pain is severe today, could barely talk."
+19,P001,2026-09-24T21:46:00,free_text,"Swallowing is getting harder, choked on water once."
+20,P001,2026-09-25T13:07:00,free_text,"Swallowing is getting harder, choked on water once."
+21,P001,2026-09-27T08:55:00,free_text,"Swallowing is getting harder, choked on water once."
+22,P001,2026-09-28T08:09:00,free_text,Vomited once last night after the chemo infusion.
+23,P001,2026-09-30T13:56:00,free_text,"Threw up 1 times after dinner, felt nauseous all morning."
+24,P001,2026-10-01T08:51:00,free_text,"Nausea about 8/10 this morning, couldn't eat breakfast."
+25,P001,2026-10-01T21:19:00,free_text,"No nausea today, felt fine all day."
+26,P001,2026-10-03T08:48:00,free_text,"Nausea was bad after the new pill, maybe 5/10."
+27,P001,2026-10-03T21:10:00,free_text,Vomited once last night after the chemo infusion.
+28,P001,2026-10-04T21:48:00,free_text,No vomiting today. Nausea mild.
+29,P001,2026-10-06T08:15:00,free_text,"No mouth sores, but pain about 5/10 when I swallow."
+30,P001,2026-10-07T08:37:00,free_text,"Throat pain is severe today, could barely talk."
+31,P001,2026-10-08T13:04:00,free_text,"No mouth sores, but pain about 8/10 when I swallow."
+32,P001,2026-10-08T13:42:00,free_text,Vomited once last night after the chemo infusion.
+33,P001,2026-10-09T08:50:00,free_text,"Nausea was bad after the new pill, maybe 9/10."
+34,P001,2026-10-10T21:27:00,free_text,"Nausea about 7/10 today, kept food down though."
+35,P001,2026-10-11T08:03:00,free_text,"Nausea was bad after the new pill, maybe 9/10."
+36,P002,2026-09-07T08:34:00,free_text,"Pain in my throat around 3/10, took the lidocaine rinse twice."
+37,P002,2026-09-08T13:51:00,free_text,"Swallowing is getting harder, choked on water once."
+38,P002,2026-09-09T21:53:00,free_text,"Threw up 3 times after dinner, felt nauseous all morning."
+39,P002,2026-09-10T13:57:00,free_text,"Pain in my throat around 3/10, took the lidocaine rinse twice."
+40,P002,2026-09-10T13:00:00,free_text,"Threw up 1 times after dinner, felt nauseous all morning."
+41,P002,2026-09-11T21:42:00,free_text,"Felt off all day, not sure why."
+42,P002,2026-09-13T21:03:00,free_text,"Throat pain is severe today, could barely talk."
+43,P002,2026-09-14T08:03:00,free_text,"Throat pain is severe today, could barely talk."
+44,P002,2026-09-14T08:04:00,free_text,Vomited once last night after the chemo infusion.
+45,P002,2026-09-15T08:37:00,free_text,"Pain in my throat around 0/10, took the lidocaine rinse twice."
+46,P002,2026-09-16T21:36:00,free_text,No vomiting today. Nausea mild.
+47,P002,2026-09-17T13:08:00,free_text,"Pain in my throat around 2/10, took the lidocaine rinse twice."
+48,P002,2026-09-18T08:29:00,free_text,"Really wiped out today, slept most of the afternoon."
+49,P002,2026-09-19T08:59:00,free_text,"Nausea about 4/10 today, kept food down though."
+50,P002,2026-09-20T13:10:00,free_text,"Pain in my throat around 3/10, took the lidocaine rinse twice."
+51,P002,2026-09-20T21:33:00,free_text,"Felt off all day, not sure why."
+52,P002,2026-09-21T08:56:00,free_text,"Swallowing is getting harder, choked on water once."
+53,P002,2026-09-23T08:43:00,free_text,"Swallowing is getting harder, choked on water once."
+54,P002,2026-09-24T08:05:00,free_text,"Felt off all day, not sure why."
+55,P002,2026-09-25T13:10:00,free_text,"Threw up 3 times after dinner, felt nauseous all morning."
+56,P002,2026-09-26T08:07:00,free_text,No vomiting today. Nausea mild.
+57,P002,2026-09-27T21:09:00,free_text,"Mouth sores are worse, maybe 1 out of 10. Hard to eat anything solid."
+58,P002,2026-09-28T13:13:00,free_text,"Really wiped out today, slept most of the afternoon."
+59,P002,2026-09-28T13:39:00,free_text,"No mouth sores, but pain about 4/10 when I swallow."
+60,P002,2026-09-29T08:56:00,free_text,"Pain in my throat around 4/10, took the lidocaine rinse twice."
+61,P002,2026-10-01T13:10:00,free_text,No vomiting today. Nausea mild.
+62,P002,2026-10-03T13:22:00,free_text,"Pain in my throat around 1/10, took the lidocaine rinse twice."
+63,P002,2026-10-04T13:17:00,free_text,"Pain in my throat around 4/10, took the lidocaine rinse twice."
+64,P002,2026-10-05T21:32:00,free_text,"Swallowing is getting harder, choked on water once."
+65,P002,2026-10-06T08:37:00,free_text,Vomited once last night after the chemo infusion.
+66,P002,2026-10-07T13:22:00,free_text,"Nausea about 4/10 today, kept food down though."
+67,P002,2026-10-08T08:16:00,free_text,"Throat pain is severe today, could barely talk."
+68,P002,2026-10-09T21:46:00,free_text,Vomited once last night after the chemo infusion.
+69,P002,2026-10-10T13:39:00,free_text,"Pain in my throat around 4/10, took the lidocaine rinse twice."
+70,P002,2026-10-11T13:42:00,free_text,"Swallowing is getting harder, choked on water once."
+71,P003,2026-09-07T21:47:00,free_text,"Mouth sores are worse, maybe 3 out of 10. Hard to eat anything solid."
+72,P003,2026-09-08T21:53:00,free_text,"Swallowing is getting harder, choked on water once."
+73,P003,2026-09-09T13:28:00,free_text,No vomiting today. Nausea mild.
+74,P003,2026-09-11T08:18:00,free_text,"Mouth sores are worse, maybe 1 out of 10. Hard to eat anything solid."
+75,P003,2026-09-12T21:19:00,free_text,"Really wiped out today, slept most of the afternoon."
+76,P003,2026-09-15T13:56:00,free_text,"Nausea about 5/10 today, kept food down though."
+77,P003,2026-09-17T13:14:00,free_text,"Pain in my throat around 4/10, took the lidocaine rinse twice."
+78,P003,2026-09-18T08:35:00,free_text,Vomited once last night after the chemo infusion.
+79,P003,2026-09-19T21:38:00,free_text,"Felt off all day, not sure why."
+80,P003,2026-09-20T21:57:00,free_text,"Felt off all day, not sure why."
+81,P003,2026-09-21T13:16:00,free_text,Vomited once last night after the chemo infusion.
+82,P003,2026-09-22T13:40:00,free_text,"Swallowing is getting harder, choked on water once."
+83,P003,2026-09-23T08:08:00,free_text,"Swallowing is getting harder, choked on water once."
+84,P003,2026-09-24T08:04:00,free_text,"Mouth sores are worse, maybe 5 out of 10. Hard to eat anything solid."
+85,P003,2026-09-25T13:57:00,free_text,"Felt off all day, not sure why."
+86,P003,2026-09-26T13:30:00,free_text,"Threw up 3 times after dinner, felt nauseous all morning."
+87,P003,2026-09-27T21:47:00,free_text,No vomiting today. Nausea mild.
+88,P003,2026-09-28T08:17:00,free_text,"Pain in my throat around 1/10, took the lidocaine rinse twice."
+89,P003,2026-09-29T08:53:00,free_text,"Really wiped out today, slept most of the afternoon."
+90,P003,2026-09-29T21:34:00,free_text,"Felt off all day, not sure why."
+91,P003,2026-09-30T08:55:00,free_text,"Throat pain is severe today, could barely talk."
+92,P003,2026-10-01T08:29:00,free_text,No vomiting today. Nausea mild.
+93,P003,2026-10-01T13:16:00,free_text,"Really wiped out today, slept most of the afternoon."
+94,P003,2026-10-02T13:14:00,free_text,Vomited once last night after the chemo infusion.
+95,P003,2026-10-03T08:53:00,free_text,"No mouth sores, but pain about 4/10 when I swallow."
+96,P003,2026-10-05T13:44:00,free_text,"Throat pain is severe today, could barely talk."
+97,P003,2026-10-06T08:19:00,free_text,"Throat pain is severe today, could barely talk."
+98,P003,2026-10-07T21:58:00,free_text,"Swallowing is getting harder, choked on water once."
+99,P003,2026-10-07T21:44:00,free_text,No vomiting today. Nausea mild.
+100,P003,2026-10-09T08:50:00,free_text,"No mouth sores, but pain about 6/10 when I swallow."
+101,P003,2026-10-10T21:41:00,free_text,"Really wiped out today, slept most of the afternoon."
+102,P003,2026-10-11T13:23:00,free_text,"Felt off all day, not sure why."
+103,P004,2026-09-07T13:39:00,free_text,No vomiting today. Nausea mild.
+104,P004,2026-09-08T13:52:00,free_text,"Felt off all day, not sure why."
+105,P004,2026-09-09T08:48:00,free_text,"Pain in my throat around 3/10, took the lidocaine rinse twice."
+106,P004,2026-09-10T08:31:00,free_text,No vomiting today. Nausea mild.
+107,P004,2026-09-12T21:00:00,free_text,"Really wiped out today, slept most of the afternoon."
+108,P004,2026-09-14T21:30:00,free_text,Vomited once last night after the chemo infusion.
+109,P004,2026-09-15T08:19:00,free_text,"Threw up 3 times after dinner, felt nauseous all morning."
+110,P004,2026-09-16T13:27:00,free_text,Vomited once last night after the chemo infusion.
+111,P004,2026-09-17T08:07:00,free_text,"Really wiped out today, slept most of the afternoon."
+112,P004,2026-09-18T08:12:00,free_text,Vomited once last night after the chemo infusion.
+113,P004,2026-09-19T08:53:00,free_text,"Throat pain is severe today, could barely talk."
+114,P004,2026-09-21T13:02:00,free_text,Vomited once last night after the chemo infusion.
+115,P004,2026-09-21T21:55:00,free_text,"Threw up 1 times after dinner, felt nauseous all morning."
+116,P004,2026-09-23T13:11:00,free_text,"Felt off all day, not sure why."
+117,P004,2026-09-24T08:36:00,free_text,"Felt off all day, not sure why."
+118,P004,2026-09-25T13:05:00,free_text,"Mouth sores are worse, maybe 5 out of 10. Hard to eat anything solid."
+119,P004,2026-09-25T21:50:00,free_text,"Pain in my throat around 7/10, took the lidocaine rinse twice."
+120,P004,2026-09-26T13:19:00,free_text,No vomiting today. Nausea mild.
+121,P004,2026-09-27T08:48:00,free_text,"Swallowing is getting harder, choked on water once."
+122,P004,2026-09-30T13:44:00,free_text,"Threw up 2 times after dinner, felt nauseous all morning."
+123,P004,2026-09-30T21:18:00,free_text,"Throat pain is severe today, could barely talk."
+124,P004,2026-10-01T13:50:00,free_text,"No mouth sores, but pain about 6/10 when I swallow."
+125,P004,2026-10-02T08:58:00,free_text,"Pain in my throat around 4/10, took the lidocaine rinse twice."
+126,P004,2026-10-04T08:50:00,free_text,"Nausea about 7/10, stayed in bed."
+127,P004,2026-10-04T21:19:00,free_text,"Nausea about 2/10 today, pretty good day."
+128,P004,2026-10-05T08:29:00,free_text,"Swallowing is getting harder, choked on water once."
+129,P004,2026-10-06T21:02:00,free_text,"Swallowing is getting harder, choked on water once."
+130,P004,2026-10-07T08:05:00,free_text,"Throat pain is severe today, could barely talk."
+131,P004,2026-10-08T13:36:00,free_text,"Throat pain is severe today, could barely talk."
+132,P004,2026-10-09T21:28:00,free_text,"Felt off all day, not sure why."
+133,P004,2026-10-11T13:20:00,free_text,"Felt off all day, not sure why."
+134,P005,2026-09-07T21:25:00,free_text,"Felt off all day, not sure why."
+135,P005,2026-09-08T13:55:00,free_text,"Felt off all day, not sure why."
+136,P005,2026-09-09T13:26:00,free_text,"No mouth sores, but pain about 3/10 when I swallow."
+137,P005,2026-09-10T08:17:00,free_text,"Throat pain is severe today, could barely talk."
+138,P005,2026-09-11T13:07:00,free_text,"Felt off all day, not sure why."
+139,P005,2026-09-12T21:26:00,free_text,"Pain in my throat around 2/10, took the lidocaine rinse twice."
+140,P005,2026-09-13T08:41:00,free_text,"Nausea about 1/10 today, kept food down though."
+141,P005,2026-09-14T13:15:00,free_text,"Swallowing is getting harder, choked on water once."
+142,P005,2026-09-16T13:49:00,free_text,"Mouth sores are worse, maybe 3 out of 10. Hard to eat anything solid."
+143,P005,2026-09-17T13:53:00,free_text,Vomited once last night after the chemo infusion.
+144,P005,2026-09-18T13:34:00,free_text,"Felt off all day, not sure why."
+145,P005,2026-09-19T21:15:00,free_text,Vomited once last night after the chemo infusion.
+146,P005,2026-09-21T13:24:00,free_text,"Felt off all day, not sure why."
+147,P005,2026-09-21T13:02:00,free_text,"No mouth sores, but pain about 4/10 when I swallow."
+148,P005,2026-09-22T13:06:00,free_text,"Really wiped out today, slept most of the afternoon."
+149,P005,2026-09-23T08:30:00,free_text,"Mouth sores are worse, maybe 1 out of 10. Hard to eat anything solid."
+150,P005,2026-09-24T13:41:00,free_text,"Throat pain is severe today, could barely talk."
+151,P005,2026-09-25T21:45:00,free_text,"No mouth sores, but pain about 4/10 when I swallow."
+152,P005,2026-09-26T21:04:00,free_text,Vomited once last night after the chemo infusion.
+153,P005,2026-09-27T08:48:00,free_text,"Swallowing is getting harder, choked on water once."
+154,P005,2026-09-28T21:19:00,free_text,"Felt off all day, not sure why."
+155,P005,2026-09-29T08:33:00,free_text,"Threw up 1 times after dinner, felt nauseous all morning."
+156,P005,2026-09-29T21:50:00,free_text,No vomiting today. Nausea mild.
+157,P005,2026-10-01T08:29:00,free_text,"No mouth sores, but pain about 4/10 when I swallow."
+158,P005,2026-10-02T13:57:00,free_text,"No mouth sores, but pain about 7/10 when I swallow."
+159,P005,2026-10-03T13:40:00,free_text,"Nausea about 2/10 today, kept food down though."
+160,P005,2026-10-04T08:24:00,free_text,"Felt off all day, not sure why."
+161,P005,2026-10-06T13:17:00,free_text,"Swallowing is getting harder, choked on water once."
+162,P005,2026-10-07T21:31:00,free_text,"Threw up 3 times after dinner, felt nauseous all morning."
+163,P005,2026-10-08T08:39:00,free_text,"Pain in my throat around 3/10, took the lidocaine rinse twice."
+164,P005,2026-10-09T08:40:00,free_text,"No mouth sores, but pain about 3/10 when I swallow."
+165,P005,2026-10-10T13:46:00,free_text,"Threw up 3 times after dinner, felt nauseous all morning."
+166,P005,2026-10-11T13:11:00,free_text,"Really wiped out today, slept most of the afternoon."

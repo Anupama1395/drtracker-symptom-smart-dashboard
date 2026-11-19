@@ -1,0 +1,13 @@
+patient_id,drug,dose,start_date,end_date
+P001,cisplatin,100 mg/m2 weekly,2026-09-07,
+P001,ondansetron,8 mg,2026-09-07,2026-09-27
+P001,olanzapine,5 mg,2026-09-28,
+P002,cisplatin,100 mg/m2 weekly,2026-09-07,
+P002,ondansetron,8 mg,2026-09-07,
+P003,cisplatin,100 mg/m2 weekly,2026-09-07,
+P003,ondansetron,8 mg,2026-09-07,
+P004,cisplatin,100 mg/m2 weekly,2026-09-07,
+P004,ondansetron,8 mg,2026-09-07,2026-09-27
+P004,olanzapine,5 mg,2026-09-28,
+P005,cisplatin,100 mg/m2 weekly,2026-09-07,
+P005,ondansetron,8 mg,2026-09-07,
