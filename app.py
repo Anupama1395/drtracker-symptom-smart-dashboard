@@ -29,7 +29,13 @@ FLAG_LABELS = {"same_day_conflict": ("Same-day conflict", "red"),
                "evidence_not_in_text": ("Quote not in report", "amber"),
                "frequency_implausible": ("Implausible count", "amber"),
                "upload": ("Uploaded document", "teal"),
-               "fhir_import": ("FHIR import", "teal")}
+               "fhir_import": ("FHIR import", "teal"),
+               "denial_unsupported": ("Denial not in text", "red"),
+               "related_med_inferred": ("Medication link inferred", "amber"),
+               "partial_llm_output": ("Partly invalid LLM output", "amber")}
+# Where an event came from: shown on every review card and in the LLM-health panel
+SOURCE = {"llm": ("LLM", "teal"), "rule": ("Regex fallback", "amber"), "manual": ("Manual edit", "green"),
+          "import": ("FHIR import", "gray")}
 
 st.html(f"""<style>
 [class*="st-key-card"] {{ background:#FFFFFF; box-shadow:0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.04); }}
@@ -83,6 +89,25 @@ def flag_pills(flags: str) -> str:
                                        else (f.replace("_", " "), "gray"))
         out.append(pill(label, color))
     return "".join(dict.fromkeys(out))                        # de-duplicate, keep order
+
+
+def source_pill(by) -> str:
+    label, color = SOURCE.get(str(by), (str(by), "gray"))
+    return pill(label, color, dot=True)
+
+
+@st.cache_data(ttl=60, show_spinner=False)
+def cached_llm_status():
+    from parser import llm_status
+    return llm_status()
+
+
+def demo_banner():
+    ok, status = cached_llm_status()
+    if not ok:
+        st.html(f'<div style="margin:0 0 8px">{pill("Demo mode", "amber", dot=True)}'
+                f'<span class="muted">{esc(status)}. New reports are parsed by the regex fallback and '
+                f'go to review. On a hosted demo, changes reset when the app restarts.</span></div>')
 
 
 def review_action(kind, event_id, symptom):
@@ -294,7 +319,8 @@ with st.sidebar:
     st.caption("Patients by urgency")
     if not shown:
         st.caption("No patient matches that search.")
-    for k in shown:
+    show_all = len(shown) <= 12 or query or st.toggle(f"Show all {len(shown)} patients", key="show_all_pts")
+    for k in (shown if show_all else shown[:12]):
         st.button(f"{STATUS[triage[k]['status']][2]} **{triage[k]['name']}** · {triage[k]['reason']}",
                   key=f"pick_{k}", on_click=pick, args=(labels[k],), type="tertiary", width="stretch",
                   help=f"{k} — {STATUS[triage[k]['status']][0]}")
@@ -308,19 +334,20 @@ with st.sidebar:
 if not pid:
     st.title("Patients")
     st.caption(f"Sorted by urgency · as of {fmt_dy(as_of)} · synthetic data, not for clinical use")
+    demo_banner()
     roster = []
     for k in order:
         p, t = pts.set_index("patient_id").loc[k], triage[k]["t"]
         roster.append({
             "Status": f"{STATUS[triage[k]['status']][2]} {STATUS[triage[k]['status']][0]}",
             "Patient": labels[k], "Why": triage[k]["reason"],
-            "Weight": t["wt_pct"], "To review": t["review"]})
+            "Weight": "—" if t["wt_pct"] is None else f"{t['wt_pct']:+.1%}", "To review": t["review"]})
     st.dataframe(pd.DataFrame(roster), hide_index=True, alt="All patients sorted by urgency",
                  column_config={"Status": st.column_config.TextColumn(width="small"),
                                 "Patient": st.column_config.TextColumn(width="medium"),
                                 "Why": st.column_config.TextColumn(width="medium"),
-                                "Weight": st.column_config.NumberColumn("Weight Δ", format="percent", width="small",
-                                                                        help="Weight change since treatment start"),
+                                "Weight": st.column_config.TextColumn("Weight Δ", width="small",
+                                                                      help="Weight change since treatment start"),
                                 "To review": st.column_config.NumberColumn(width="small", help="Items needing review since last visit")})
     st.info("Choose a patient in the sidebar to open their pre-visit summary.", icon=":material/person_search:")
 
@@ -364,6 +391,27 @@ if not pid:
                 st.session_state.inbox_n = st.session_state.get("inbox_n", 0) + 1   # so going back doesn't re-open it
                 st.rerun()
 
+    with st.container(border=True, key="card_llm_health"):
+        ok, status = cached_llm_status()
+        st.markdown("**Parser health** · " + ("LLM online" if ok else "LLM offline"))
+        n = max(len(ev_all), 1)
+        by = ev_all["extracted_by"].value_counts()
+        flags_all = ev_all["flags"].fillna("").str.split(";").explode()
+        flags_all = flags_all[flags_all != ""]
+        failed = ev_all["flags"].fillna("").str.contains("llm_failed|partial_llm_output").mean()
+        h = st.columns(4)
+        h[0].metric("Parsed by LLM", f"{by.get('llm', 0) / n:.0%}", border=True)
+        h[1].metric("Regex fallback", f"{by.get('rule', 0) / n:.0%}", border=True)
+        h[2].metric("Manual / import", f"{(by.get('manual', 0) + by.get('import', 0)) / n:.0%}", border=True)
+        h[3].metric("LLM failed or partial", f"{failed:.0%}", border=True,
+                    help="Events whose report the LLM could not fully parse (validation or connection failure).")
+        top = flags_all.map(lambda f: "LLM unavailable" if f.startswith("llm_failed")
+                            else FLAG_LABELS.get(f, (f.replace("_", " "),))[0]).value_counts().head(5)
+        models = ev_all.dropna(subset=["model"]).groupby(["model", "prompt_version"]).size()
+        st.caption("Most common flags: " + (", ".join(f"{k} ({v})" for k, v in top.items()) or "none")
+                   + (" · Models: " + ", ".join(f"{m} {v} ({c})" for (m, v), c in models.items()) if len(models) else "")
+                   + f" · {status}")
+
     with st.container(border=True, key="card_upload_home"):
         upload_panel(None)
     st.stop()
@@ -378,6 +426,8 @@ p_proc = procs[procs["patient_id"] == pid].sort_values("date")
 p_visits = visits[visits["patient_id"] == pid].sort_values("visit_date")
 p_reps = reps[reps["patient_id"] == pid]
 status_label, status_color, _ = STATUS[S["status"]]
+
+demo_banner()
 
 # 1) header card
 initials = "".join(w[0] for w in str(pt["name"]).split()[:2]).upper()
@@ -683,7 +733,7 @@ with tab_rep:
                             c_txt.html(f'<span class="chip">{esc(nice(r["symptom"]).capitalize())}'
                                        + ("" if pd.isna(r["severity"]) else f' · {r["severity"]:.0f}/10')
                                        + ("" if pd.isna(r["frequency"]) else f' · ×{int(r["frequency"])}')
-                                       + f' · conf {r["confidence"]:.1f} · {esc(str(r["extracted_by"]))}</span>')
+                                       + f' · conf {r["confidence"]:.1f}</span>' + source_pill(r["extracted_by"]))
                             c_acc.button("Accept", key=f"acc_{eid}", icon=":material/check:", width="stretch",
                                          on_click=review_action, args=("accept", eid, r["symptom"]))
                             with c_edit.popover("Edit", icon=":material/edit:", width="stretch"):
