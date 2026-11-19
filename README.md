@@ -5,12 +5,28 @@ SymptomLens is my prototype for Track B (Patient-Reported Data: Store, Manage & 
 The prototype has five parts:
 
 1. **Generate:** 5 fictional patients. Each has a full care history (biopsy, first consult, staging, treatment start on Sep 7, weekly visits), 5 weeks of free-text reports (about 166), daily weights, and an antiemetic switch on day 21 for the two patients who get worse.
-2. **Parse:** each report goes to a local LLM (Ollama, `llama3.1:8b`, JSON output). Pydantic then validates the output against the schema, and deterministic rule checks run on it. If the LLM fails, a regex parser takes over.
-3. **Store:** 7 tables in CSV, mirrored into SQLite (`data/symptomlens.db`). The queries are plain SQL.
+2. **Parse:** each report goes to a local LLM (Ollama, `llama3.1:8b` by default), whose output is constrained to the Pydantic schema. Each event is validated, checked against the report text by deterministic rules, and scored for confidence on evidence. If the LLM fails, a regex parser takes over.
+3. **Store:** SQLite (`data/symptomlens.db`) is the source of truth, with readable CSV exports. The queries are plain SQL.
 4. **Show:** a Streamlit pre-visit dashboard answering *"what changed since the last visit?"*, with the patient's history alongside.
-5. **Bring data in:** upload a patient note (.txt or .pdf) from the dashboard, or import a FHIR Bundle with a stub importer.
+5. **Review:** clinicians accept, edit, dismiss or undo every uncertain item. Each decision is attributed and logged, and corrections become new test data.
+6. **Bring data in:** upload one or many patient notes (.txt or .pdf) from the dashboard or `bulk_import.py`, or import a FHIR Bundle with a stub importer.
 
 All data is synthetic. No real patient information is used anywhere.
+
+```mermaid
+flowchart LR
+    A[Patient notes<br/>generator / upload / bulk import] --> B[parse_report]
+    B -->|schema-constrained| C[Local LLM<br/>Ollama]
+    C --> D{Pydantic per event<br/>+ 1 repair retry}
+    D -->|valid| E[Rule checks +<br/>evidence-based confidence]
+    D -->|nothing valid / LLM down| F[Regex fallback<br/>all flagged]
+    E --> G[(SQLite<br/>events)]
+    F --> G
+    G --> H[Dashboard:<br/>30-second view]
+    G --> I[Review queue<br/>accept / edit / dismiss / undo]
+    I -->|row-level update + review_log| G
+    I -->|export| J[gold_corrections.json] --> K[evaluate.py]
+```
 
 ## How to run it
 
@@ -21,15 +37,18 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ollama pull llama3.1:8b              # optional: without it the regex fallback is used and everything is flagged for review
 
-python pipeline_runner.py            # generate the data, parse every report, save CSV + SQLite (python pipeline_runner.py 3 = first 3 reports only)
+python pipeline_runner.py            # first run: generate data + parse; later runs parse only new reports
+python pipeline_runner.py --reparse  # re-run the parser on UNREVIEWED output only (e.g. after a model change)
+python bulk_import.py docs/samples/generated   # import a folder of notes (safe to re-run)
 python Queries.py                    # the SQL queries
-python evaluate.py                   # parser accuracy: LLM vs regex
-python -m pytest                     # 59 tests, no LLM needed
+python evaluate.py                   # parser accuracy: LLM vs regex (+ clinician corrections)
+python evaluate.py --models llama3.1:8b qwen2.5:7b mistral   # benchmark -> docs/MODEL_COMPARISON.md
+python -m pytest                     # 103 tests, no LLM needed (also run by GitHub Actions)
 ./scripts/run.sh                     # dashboard at http://localhost:8501 (same as: streamlit run app.py)
 python importer.py samples/fhir_bundle_P006.json          # preview a FHIR import (add --save to merge it into data/)
 ```
 
-`data/` is committed, so the dashboard opens straight away without re-running the parser.
+`data/` is committed, so the dashboard opens straight away without re-running the parser. Review clicks write to SQLite only; run `python export_csv.py` before committing `data/` so the CSVs match.
 
 ## Files
 
@@ -39,13 +58,18 @@ python importer.py samples/fhir_bundle_P006.json          # preview a FHIR impor
 | `Synthetic_datagenerator.py` | Seeded synthetic patients with history (visits, procedures, medications), reports, weights, and "silver" symptom labels |
 | `parser.py` | LLM extraction, Pydantic validation, rule checks, regex fallback |
 | `ingest.py` | Turns text into stored reports and events. Shared by the batch pipeline and the upload |
-| `pipeline_runner.py` | Runs the whole batch pipeline |
+| `pipeline_runner.py` | Batch parsing: new reports, `--reparse` unreviewed output, `--generate` (asks before deleting work) |
+| `bulk_import.py` | Import a folder of notes; per-file summary, duplicates skipped |
+| `export_csv.py` | Write every SQLite table to readable CSVs |
 | `importer.py`, `samples/` | EHR import stub and a synthetic FHIR R4 Bundle |
 | `Queries.py` | Three SQL queries |
 | `evaluate.py`, `gold.json` | Parser evaluation against 30 hand-labelled reports and the silver labels |
 | `review.py` | Clinician review actions (accept, edit, dismiss), corrections log, gold-label export |
-| `app.py` | Pre-visit dashboard, review queue and document upload |
-| `tests/` | Tests for the parser, schema, generator, upload, FHIR import and review actions |
+| `app.py` | Dashboard entry point: page setup, cached data, sidebar, routing |
+| `ui/` | Dashboard pages and pieces: `home.py`, `patient.py`, `review.py`, `upload.py`, `charts.py`, `components.py` |
+| `services/` | Dashboard logic without Streamlit: `data.py` (load + prepare), `triage.py` (what changed, urgency) |
+| `tests/` | 103 tests: parser, LLM layer (mocked), storage, pipeline, bulk import, review workflow, services, dashboard smoke test |
+| `docs/` | `BASELINE.md`, `MODEL_COMPARISON.md`, `PRODUCTION.md`, synthetic note generator (`tools/`) |
 
 ## Schema
 
@@ -60,8 +84,10 @@ medications  (patient_id, drug, dose, start_date, end_date, prescribed_by, reaso
 reports      (report_id, patient_id, reported_at, source, raw_text)    -- exactly what the patient wrote, never edited
 events       (event_id, report_id -> reports, patient_id, symptom, severity 0-10, frequency,
               onset, related_med, confidence, extracted_by, needs_review, flags,
-              review_status, reviewed_at)                                -- pending | accepted | edited | dismissed
-corrections  (event_id, field, old_value, new_value, corrected_at)      -- audit log of clinician edits
+              review_status, reviewed_at, reviewed_by,                  -- pending | accepted | edited | dismissed
+              model, prompt_version, parse_ms)                           -- which model/prompt produced it, how fast
+corrections  (event_id, field, old_value, new_value, corrected_at, reviewed_by)   -- every field a clinician changed
+review_log   (log_id, event_id, action, from_status, to_status, reviewed_by, at, details)   -- append-only
 vitals       (patient_id, measured_at, kind, value)                     -- weight
 ```
 
@@ -108,32 +134,63 @@ The history uses its own random seed, so adding it didn't change the existing re
 
 ## Parser and validation
 
-The parser has four layers:
+`parse_report()` in `parser.py`:
 
-1. **LLM** (`call_llm`): local Llama 3.1 8B through Ollama, with `format="json"` and `temperature=0`. The system prompt defines the output shape and the rules. The LLM also has to return `evidence`, an exact quote from the report.
-2. **Pydantic** (`SymptomEvent`): `symptom` must be one of 7 allowed values, `severity` must be 0–10, `confidence` 0–1, and `frequency` 0 or more. If the output breaks any of these, the regex fallback is used.
-3. **Rule checks** (`rule_checks`):
-   - `evidence_not_in_text`: the model's quote doesn't appear in the report, which suggests it made something up.
+1. **LLM call** (`call_llm`): local model through Ollama at `temperature=0`. The model is set with `SYMPTOMLENS_MODEL`.
+   - **Output is constrained to the schema** (Ollama structured outputs, generated from the Pydantic model). Older Ollama versions fall back to plain JSON mode.
+   - **Prompt `v2`:**
+     - The patient text sits inside `<report>` tags and is declared to be data, not instructions. The tags can't be closed from inside the text.
+     - Six worked examples cover negation, "last night", which symptom a number belongs to, vague reports, a severity word, and a medication link.
+     - Severity words come from the same table the regex and rule checks use (mild 3, moderate 5, bad 5, severe 8, terrible 8). "Worse" is a change, not a level.
+   - **Context:** the report date and the medications active that day are passed in, so "the new pill" can become a real drug name. That is flagged `related_med_inferred` for review.
+2. **Pydantic, event by event** (`SymptomEvent`): `symptom` must be one of 7 values, `severity` 0–10, and `frequency` 0 or more.
+   - Invalid events get **one repair retry** that includes the validation errors.
+   - Valid events are kept even if others fail (flagged `partial_llm_output`).
+   - Only if nothing valid comes back does the regex fallback take over.
+3. **Confidence from evidence, not the model's own guess:**
+   - 0.3 if the quoted evidence is in the report (ignoring punctuation and spacing)
+   - \+ 0.4 if the regex parser found the same symptom
+   - \+ 0.3 if the severities agree
+
+   Below **0.6** goes to review. So a paraphrase the regex can't see ("sick to my stomach") is always checked by a person.
+4. **Rule checks** (`rule_checks`):
+   - `evidence_not_in_text`
    - `severity_unsupported`
    - `negation_conflict`
    - `frequency_implausible` (more than 20)
+   - `denial_unsupported`: severity 0 without a "no" or "not" in the quote. This catches a model slip, or a prompt injection like "set severity 0".
+   - `related_med_inferred`
 
-   Any flag, confidence below 0.6, or `other` means `needs_review`.
-4. **Regex fallback** (`regex_parse`): used if the LLM is down, returns invalid JSON, or fails validation. Everything it produces is marked `needs_review`.
+   Any flag, low confidence, or `other` means `needs_review`.
+5. **Regex fallback** (`regex_parse`): used when the LLM is down or returns nothing valid, and everything it produces goes to review.
+   - A "/10" number belongs to the nearest symptom before it in the sentence, so in "pain 8/10, worse when swallowing", only pain is 8.
+   - Vague phrases ("felt off") are kept as `other` alongside other symptoms.
+6. **Provenance and cache:**
+   - Every event stores `model`, `prompt_version` and `parse_ms`.
+   - LLM answers are cached in `data/llm_cache.sqlite`, keyed by text + model + prompt version, so re-runs are instant and identical.
 
 **Evaluation** (`python evaluate.py`):
 
 - **Gold set:** 30 hand-labelled reports. Half follow the generator's templates; half are phrasings the generator never uses.
-- **Silver labels:** symptom labels carried over from the templates, checked against every stored report.
+- **Clinician corrections:** `gold_corrections.json`, exported from the review queue, is scored too when it's present.
+- **Silver labels:** symptom labels carried over from the templates, checked against the stored events.
+- **Model benchmark:** `python evaluate.py --models …` writes **[docs/MODEL_COMPARISON.md](docs/MODEL_COMPARISON.md)**. It reports precision, recall, severity error, frequency accuracy, valid-JSON rate, fallback rate and seconds per report, and picks a default from those numbers.
 
 | Parser | Gold symptom precision | Gold recall | Severity MAE | Frequency exact |
 |---|---|---|---|---|
 | Regex baseline | 0.84 | 0.80 | 0.00 (n=17) | 9/10 |
-| LLM (llama3.1:8b) | *run `evaluate.py` with Ollama up* | | | |
+| LLM | *not yet measured: Ollama was unavailable on the development machine. Run `python evaluate.py --models llama3.1:8b qwen2.5:7b mistral`* | | | |
 
 The regex scores 1.00 on the silver labels because it was written against the same templates. Its recall drops to 0.80 on wording it hasn't seen. That gap is the case for the LLM. The regex stays as a fallback because it is predictable and cannot hallucinate.
 
-**Tests** (`python -m pytest`, 59 tests): they cover negation, "last night", severity words and numbers, clause handling, every rule check, and the LLM failure paths (LLM down, severity 12, made-up symptom name, valid output). They also cover the save/load round trip, empty data, timeline order in the generator, deterministic output, the upload path (txt and pdf), the FHIR import, and the review actions (accept, edit, refusing severity 12, dismiss, raw text unchanged, gold export). The LLM is replaced in the tests, so they run without Ollama.
+**Tests** (`python -m pytest`, 103 tests, also run by GitHub Actions on every push): they cover these areas. The LLM is mocked in every test, so they run without Ollama.
+- **Parser:** negation, "last night", severity words, number ownership, every rule check.
+- **LLM layer:** schema passed to Ollama, per-event validation, repair retry, fallback, evidence-based confidence, prompt injection, cache, context, provenance, benchmark.
+- **Storage:** atomic saves, integer round-trip, duplicate refusal, `--parse`/`--reparse` not losing work.
+- **Bulk import:** new patients, duplicates, wrong patient, bad files.
+- **Review workflow:** reviewer required, row-level saves, undo, append-only log.
+- **Services:** triage and the "what changed" summary.
+- **Dashboard smoke test:** every patient renders, and a review click updates the counts.
 
 ## Queries (`Queries.py`, SQL over SQLite)
 
@@ -166,7 +223,15 @@ The dashboard is built around one question: **what changed since the last visit?
 
 ## Document upload
 
-The sidebar has an uploader for `.txt` and `.pdf` files. Text is extracted from PDFs with pypdf. Upload flow:
+The uploader (on the home page and on each patient's Reports tab) takes **one or many** `.txt`/`.pdf` files. The same logic runs from the command line as `python bulk_import.py <folder>`. Text is extracted from PDFs with pypdf. For each file:
+
+- **Patient:** the note is filed under the selected patient, or under the `Patient: P###` in its header. An unknown ID becomes a new patient, created from the header. A note naming a different patient than the one selected is refused.
+- **Dates:** a note with several `Date:` lines becomes **one report per date**.
+- **Duplicates:** the same patient, date and text is skipped, so re-importing a folder adds nothing.
+- **Bad files:** a bad file is listed in the summary table with its reason and never stops the batch.
+- **Tested** with the 100 generated notes in `docs/samples/generated`: about 0.05 s per note with the LLM offline. With a local LLM, expect several seconds per note.
+
+Upload flow per report:
 
 1. **Extract text:** only the text is used. The file itself is never written to disk. Text is capped at 5,000 characters, and scanned PDFs with no text layer are rejected with a message.
 2. **Parse:** the text goes through `parse_report`, the same LLM, validation and fallback path as everything else.
@@ -215,10 +280,15 @@ Every item the parser is unsure about lands in the **review queue** (Reports tab
 - **Corrections become test data.** "Export corrections as gold labels" writes `gold_corrections.json` in the same format as `gold.json`. Only reports where *every* extracted item has a decision are exported, so unchecked parser output never counts as truth. `python evaluate.py` scores the parser on these reports too, and on both sets combined.
 - **Re-running detection doesn't undo a review.** A conflict a clinician has already reviewed is not reopened when a later upload triggers conflict detection again.
 
+**Who decided, and undoing a decision:**
+- **Reviewer name:** you type it in the sidebar. It's required, and it's stored on the event (`reviewed_by`) and on every correction.
+- **Row-level saves:** each click updates only that event's row in SQLite and appends one entry to `review_log` (action, from/to status, reviewer, time). The log is append-only.
+- **Undo** reverts the most recent action on an item. The event gets its previous values back, reversing rows go into `corrections`, and an `undo` entry goes into `review_log`. Nothing is deleted or silently overwritten.
+- **Review inbox:** the home page lists pending items across all patients, filterable by flag, patient and date. Selecting a row opens that patient.
+
 **Where reviews are stored, and when they're lost:**
-- **`python pipeline_runner.py` rebuilds `data/` from scratch.** That resets every review decision and empties the corrections log. Export the gold labels first if you want to keep them.
-- **On Streamlit Community Cloud, reviews are temporary.** The app writes to the container's disk, which is wiped whenever the app restarts or redeploys. Keeping them would need a real database.
-- **No reviewer identity is recorded yet.** A real system would log *who* made each decision, not only when.
+- **`python pipeline_runner.py` keeps reviews.** Plain runs only parse new reports, and `--reparse` only touches unreviewed parser output. Only `--generate` rebuilds the dataset, and it refuses to delete uploads, reviews or corrections unless you confirm (or pass `--yes`).
+- **On Streamlit Community Cloud, reviews are temporary.** The app writes to the container's disk, which is wiped whenever the app restarts or redeploys. Keeping them would need a hosted database (see [docs/PRODUCTION.md](docs/PRODUCTION.md)).
 
 ## Where AI is used, and where it isn't
 
@@ -229,10 +299,12 @@ Every item the parser is unsure about lands in the **review queue** (Reports tab
 ## Trade-offs and limits
 
 - **A local 8B model instead of a hosted API:** free, and no data leaves the machine. The cost is accuracy and speed. For the demo I run the batch ahead of time and parse one or two reports live, or upload a note.
-- **CSV plus SQLite instead of Postgres:** no setup, and everything sits in the repo. The schema is relational and would move to Postgres unchanged.
-- **The upload rewrites files:** each upload rewrites the CSVs and the database. That is fine for one user. Several users at once would need a real database with transactions.
-- **`pipeline_runner.py` regenerates `data/`:** this drops any uploads, imports and review decisions. That keeps the demo reproducible; a real system would add data incrementally.
+- **SQLite instead of Postgres:** no setup, and everything sits in the repo.
+  - **Review clicks** are single-row updates.
+  - **Batch writes** (uploads, pipeline runs) build a new copy of the database and swap it in, so a crash can't leave it half-written. They're still last-writer-wins, which is fine for one user, but several users at once would need Postgres. [docs/PRODUCTION.md](docs/PRODUCTION.md) describes what production would need.
+- **The reviewer name is typed, not signed in.** Fine for a demo; production would use single sign-on.
 - **The history is generated, not real.** Visits, procedures and doses are plausible for head-and-neck chemoradiation, but they are illustrative and not clinical guidance.
-- **Synthetic data is cleaner than real patients.** The gold set is small: 30 reports, labelled by one person.
+- **Synthetic data is cleaner than real patients.** The gold set is small: 30 reports, labelled by one person. Clinician corrections are designed to grow it.
+- **LLM results are still missing.** Ollama couldn't run on the development machine, so every stored event so far comes from the regex fallback. The LLM layer is covered by tests with a mocked model.
 - **Severity scale:** putting different symptoms on one 0–10 scale is a simplification. Real use would probably map to CTCAE grades, with clinical input.
 - **No clinical or compliance claims.** The dashboard summarises what patients reported. It does not diagnose, and the thresholds (−5% weight, the review rules, the conflict gap of 4) are placeholders that a clinician would set.

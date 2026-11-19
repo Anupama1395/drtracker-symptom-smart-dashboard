@@ -58,13 +58,19 @@ kill $(lsof -ti tcp:8501 -sTCP:LISTEN)
 
 | What | Command |
 |---|---|
-| Rebuild all data and parse every report (**resets uploads and reviews**) | `python pipeline_runner.py` |
-| Parse only the first 3 reports (quick LLM check) | `python pipeline_runner.py 3` |
+| Parse reports that have no events yet (first run also generates the synthetic data) | `python pipeline_runner.py` |
+| Same, at most 3 reports (quick LLM check) | `python pipeline_runner.py 3` |
+| Re-run the parser on **unreviewed** output only (e.g. after changing model or prompt) | `python pipeline_runner.py --reparse` |
+| Rebuild the synthetic dataset from scratch (asks before deleting uploads, reviews or corrections) | `python pipeline_runner.py --generate` |
+| Import a folder of notes (safe to re-run; duplicates are skipped) | `python bulk_import.py docs/samples/generated` |
+| Make 100 more synthetic notes (P108–P207) | `python docs/tools/make_synthetic_docs.py --start 108 --count 100` |
+| Use a different local model | `SYMPTOMLENS_MODEL=qwen2.5:7b python pipeline_runner.py --reparse` |
 | SQL queries | `python Queries.py` |
 | Parser accuracy (gold set, clinician corrections, silver labels) | `python evaluate.py` |
-| Tests (no LLM needed) | `python -m pytest` |
+| Compare local models, writing `docs/MODEL_COMPARISON.md` | `python evaluate.py --models llama3.1:8b qwen2.5:7b mistral` |
+| Write every table to readable CSVs, before committing `data/` | `python export_csv.py` |
+| Tests (no LLM needed; GitHub Actions runs them on every push) | `python -m pytest` |
 | Preview a FHIR import | `python importer.py samples/fhir_bundle_P006.json` |
-| Make 100 synthetic upload documents (P108–P207) | `python docs/tools/make_synthetic_docs.py --start 108 --count 100` |
 
 ## Troubleshooting
 
@@ -72,5 +78,7 @@ kill $(lsof -ti tcp:8501 -sTCP:LISTEN)
 |---|---|
 | `Address already in use` | Another copy is on 8501: use `./scripts/restart.sh`, or `PORT=8502 ./scripts/run.sh` |
 | "No parsed events yet" in the app | Run `python pipeline_runner.py` |
-| Every item is flagged "LLM unavailable" | Ollama isn't running or the model isn't pulled. The app still works through the regex fallback |
+| Every item is flagged "LLM unavailable" / "Demo mode" banner | Ollama isn't running or the model isn't pulled (`ollama pull llama3.1:8b`). The app still works through the regex fallback. Once it's up, run `python pipeline_runner.py --reparse` |
+| "Enter your name as reviewer first" | Type a name in the sidebar's **Reviewer name** box. Every decision is attributed |
+| A note was "skipped (duplicate)" | The same patient, date and text is already stored. Nothing was lost |
 | Restart didn't happen at 01:22 | Run `./scripts/schedule_restart.sh status`, then check `logs/schedule.log` and `logs/restart.log` |
