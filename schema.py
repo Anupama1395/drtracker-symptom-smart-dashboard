@@ -1,6 +1,10 @@
-# schema.py — table definitions + storage (CSV for readability, SQLite for querying)
+# schema.py — table definitions + storage.
+# SQLite (data/symptomlens.db) is the source of truth. CSVs are a readable export written on full saves
+# (and by `python export_csv.py`); row-level updates (review clicks) go to SQLite only.
 import os
+import shutil
 import sqlite3
+import tempfile
 from datetime import date, datetime
 
 import pandas as pd
@@ -46,11 +50,18 @@ events_cols = [
     "flags",          # which checks fired, ";"-separated
     "review_status",  # "pending" | "accepted" | "edited" | "dismissed"; empty = never needed review
     "reviewed_at",    # when a clinician acted on it
+    "reviewed_by",    # who acted on it (name typed in the sidebar)
+    "model",          # LLM that produced it (empty for regex / manual / import)
+    "prompt_version", # prompt version used, so results can be reproduced
+    "parse_ms",       # how long parsing the report took
 ]
 
 # Audit log of clinician edits: one row per changed field. Kept outside the main store
 # (data/corrections.csv + its own SQLite table) so it survives being appended to, never rewritten.
-corrections_cols = ["event_id", "field", "old_value", "new_value", "corrected_at"]
+corrections_cols = ["event_id", "field", "old_value", "new_value", "corrected_at", "reviewed_by"]
+
+# Append-only log of every review action (accept / edit / dismiss / undo). Never updated or deleted.
+review_log_cols = ["log_id", "event_id", "action", "from_status", "to_status", "reviewed_by", "at"]
 
 # One row per measurement
 vitals_cols = ["patient_id", "measured_at", "kind", "value"]
@@ -92,44 +103,144 @@ def storable(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+# Columns that must come back as integers (CSV/SQLite turn int + NULL into float: 1 -> 1.0)
+INT_COLS = {"events": ["frequency", "parse_ms"], "reports": ["report_id"]}
+BOOL_COLS = {"events": ["needs_review"]}
+EXTRA_TABLES = {"corrections": corrections_cols, "review_log": review_log_cols}
+
+
+def _normalise(name, df):
+    """Same dtypes whether a table came from SQLite or CSV; old data gains new columns as empty."""
+    cols = COLUMNS.get(name) or EXTRA_TABLES.get(name, [])
+    for c in cols:
+        if c not in df.columns:
+            df[c] = pd.NA
+    df = df[cols + [c for c in df.columns if c not in cols]]
+    for c in INT_COLS.get(name, []):
+        num = pd.to_numeric(df[c], errors="coerce")
+        if num.notna().sum() == df[c].notna().sum():          # only cast when every value is numeric
+            df[c] = num.round().astype("Int64")
+    for c in BOOL_COLS.get(name, []):
+        df[c] = df[c].astype(str).str.lower().isin(["true", "1", "1.0"])
+    return df
+
+
+def _write_tables(conn, tables):
+    for name, df in tables.items():
+        storable(df).to_sql(name, conn, if_exists="replace", index=False)
+    conn.execute("CREATE INDEX IF NOT EXISTS ix_events_pso ON events(patient_id, symptom, onset)")
+    conn.execute("CREATE INDEX IF NOT EXISTS ix_reports_p ON reports(patient_id, reported_at)")
+    conn.execute("CREATE INDEX IF NOT EXISTS ix_visits_p ON visits(patient_id, visit_date)")
+
+
 def save_sqlite(store, path):
-    """Mirror every table into SQLite so the queries can be plain SQL."""
-    with sqlite3.connect(path) as conn:
-        for name, df in store.items():
-            storable(df).to_sql(name, conn, if_exists="replace", index=False)
-        conn.execute("CREATE INDEX IF NOT EXISTS ix_events_pso ON events(patient_id, symptom, onset)")
-        conn.execute("CREATE INDEX IF NOT EXISTS ix_reports_p ON reports(patient_id, reported_at)")
-        conn.execute("CREATE INDEX IF NOT EXISTS ix_visits_p ON visits(patient_id, visit_date)")
+    """Write the store into SQLite atomically: build a copy (keeping tables not in the store, e.g.
+    corrections and review_log), then swap it in. A crash mid-write leaves the old file intact."""
+    folder = os.path.dirname(os.path.abspath(path))
+    fd, tmp = tempfile.mkstemp(suffix=".db", dir=folder)
+    os.close(fd)
+    try:
+        if os.path.exists(path):
+            shutil.copyfile(path, tmp)
+        with sqlite3.connect(tmp) as conn:
+            _write_tables(conn, store)
+        os.replace(tmp, path)
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+
+
+def export_csv(store, folder="data"):
+    for name, df in store.items():
+        storable(df).to_csv(os.path.join(folder, f"{name}.csv"), index=False)
 
 
 def save(store, folder="data"):
+    """Full save of the main tables: SQLite first (atomic), then the CSV export."""
     os.makedirs(folder, exist_ok=True)
-    store = {name: storable(df) for name, df in store.items()}
-    save_sqlite(store, os.path.join(folder, DB_NAME))     # database first: if it fails, CSVs stay untouched
-    for name, df in store.items():
-        df.to_csv(os.path.join(folder, f"{name}.csv"), index=False)
+    save_sqlite(store, os.path.join(folder, DB_NAME))
+    export_csv(store, folder)
+
+
+def _db_tables(path):
+    if not os.path.exists(path):
+        return set()
+    with sqlite3.connect(path) as conn:
+        return {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+
+
+def _read(folder, name, cols):
+    db = os.path.join(folder, DB_NAME)
+    if name in _db_tables(db):
+        with sqlite3.connect(db) as conn:
+            df = pd.read_sql(f'SELECT * FROM "{name}"', conn)
+    elif os.path.exists(csv := os.path.join(folder, f"{name}.csv")):
+        df = pd.read_csv(csv)                                  # older data without a database
+    else:
+        df = pd.DataFrame(columns=cols)
+    return _normalise(name, df)
 
 
 def load(folder="data"):
-    """Load every table; a missing CSV (e.g. data from an older version) comes back empty."""
-    store = {}
-    for name, cols in COLUMNS.items():
-        path = os.path.join(folder, f"{name}.csv")
-        store[name] = pd.read_csv(path) if os.path.exists(path) else pd.DataFrame(columns=cols)
-    return store
+    """Every main table, from SQLite (falls back to the CSVs for older data). Missing = empty."""
+    return {name: _read(folder, name, cols) for name, cols in COLUMNS.items()}
+
+
+# ---------------- row-level writes (review clicks, logs): no full rewrite ----------------
+def update_rows(table, key_col, key_value, fields: dict, folder="data"):
+    """UPDATE one table's matching rows in a single transaction."""
+    if not fields:
+        return 0
+    vals = [_iso(v) if not (v is None or (not isinstance(v, str) and pd.isna(v))) else None
+            for v in fields.values()]
+    vals = [int(v) if isinstance(v, bool) else v for v in vals]
+    sets = ", ".join(f'"{c}" = ?' for c in fields)
+    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+        existing = {r[1] for r in conn.execute(f'PRAGMA table_info("{table}")')}
+        for c in fields:
+            if c not in existing:
+                conn.execute(f'ALTER TABLE "{table}" ADD COLUMN "{c}"')
+        cur = conn.execute(f'UPDATE "{table}" SET {sets} WHERE CAST("{key_col}" AS TEXT) = ?',
+                           vals + [str(key_value)])
+        return cur.rowcount
+
+
+def append_rows(table, df, folder="data"):
+    """INSERT rows (append-only logs). Creates the table if it doesn't exist yet."""
+    if df is None or len(df) == 0:
+        return
+    os.makedirs(folder, exist_ok=True)
+    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+        storable(df).to_sql(table, conn, if_exists="append", index=False)
+
+
+def _load_extra(name, folder):
+    return _read(folder, name, EXTRA_TABLES[name])
+
+
+def _save_extra(name, df, folder):
+    os.makedirs(folder, exist_ok=True)
+    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+        storable(df).to_sql(name, conn, if_exists="replace", index=False)
+    storable(df).to_csv(os.path.join(folder, f"{name}.csv"), index=False)
 
 
 def load_corrections(folder="data"):
-    path = os.path.join(folder, "corrections.csv")
-    return pd.read_csv(path) if os.path.exists(path) else pd.DataFrame(columns=corrections_cols)
+    return _load_extra("corrections", folder)
 
 
 def save_corrections(corrections, folder="data"):
-    os.makedirs(folder, exist_ok=True)
-    df = storable(corrections)
-    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
-        df.to_sql("corrections", conn, if_exists="replace", index=False)
-    df.to_csv(os.path.join(folder, "corrections.csv"), index=False)
+    _save_extra("corrections", corrections, folder)
+
+
+def load_review_log(folder="data"):
+    return _load_extra("review_log", folder)
+
+
+def clear_review_history(folder="data"):
+    """Used only when synthetic data is regenerated: old logs would point at events that no longer exist."""
+    for name, cols in EXTRA_TABLES.items():
+        _save_extra(name, pd.DataFrame(columns=cols), folder)
 
 
 def connect(folder="data"):

@@ -7,7 +7,7 @@ from typing import Callable
 
 import pandas as pd
 
-from parser import Extraction, parse_report
+from parser import Extraction, _norm, parse_report
 from schema import save
 
 MAX_UPLOAD_CHARS = 5000          # an upload is a patient note, not a medical record dump
@@ -152,6 +152,27 @@ def other_patient_ids(text: str, patient_id: str) -> list[str]:
     return sorted(set(re.findall(r"\bP\d{3}\b", text)) - {patient_id})
 
 
+class DuplicateReportError(ValueError):
+    """The same note was already stored for this patient on this date."""
+    def __init__(self, report_id):
+        super().__init__(f"Duplicate: this note was already added as report {report_id}. Nothing was saved.")
+        self.report_id = report_id
+
+
+def find_duplicate(reports: pd.DataFrame, patient_id: str, text: str, reported_at) -> int | None:
+    """Same patient + same date + same text (ignoring case, punctuation and spacing)."""
+    if reports.empty:
+        return None
+    day = pd.Timestamp(reported_at).date()
+    same = reports[(reports["patient_id"] == patient_id)
+                   & (pd.to_datetime(reports["reported_at"]).dt.date == day)]
+    key = _norm(text)
+    for _, r in same.iterrows():
+        if _norm(r["raw_text"]) == key:
+            return int(r["report_id"])
+    return None
+
+
 def ingest_text(store: dict, patient_id: str, text: str, source: str = "upload",
                 reported_at: datetime | None = None, folder: str | None = "data",
                 parse_fn: Callable[[str], tuple[Extraction, str]] = parse_report):
@@ -162,6 +183,8 @@ def ingest_text(store: dict, patient_id: str, text: str, source: str = "upload",
     report_id = int(pd.to_numeric(reports["report_id"]).max()) + 1 if len(reports) else 1
     first_event_id = int(pd.to_numeric(events["event_id"]).max()) + 1 if len(events) else 1
     reported_at = (reported_at or datetime.now()).replace(microsecond=0)
+    if (dup := find_duplicate(reports, patient_id, text, reported_at)) is not None:
+        raise DuplicateReportError(dup)
 
     extraction, by = parse_fn(read_header(text)["body"])
     new_report = pd.DataFrame([[report_id, patient_id, reported_at.isoformat(), source, text]],
