@@ -1,0 +1,13 @@
+Patient: P071 (Femi Nakamura) - synthetic test report
+DOB: 1956-02-09
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-08-23
+Treatment start: 2026-09-14 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-27
+Throat pain around 7/10.
+Really tired, slept most of the afternoon.
+No fever.
+Threw up twice after dinner.
+Vomited once yesterday.
+Choked on water once.

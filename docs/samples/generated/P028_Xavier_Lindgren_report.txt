@@ -1,0 +1,11 @@
+Patient: P028 (Xavier Lindgren) - synthetic test report
+DOB: 1979-11-19
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-17
+Treatment start: 2026-09-13 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-06
+Pain about 3/10 when eating.
+No fever.
+Nausea about 1/10 today.
+Throat pain around 3/10.

@@ -1,0 +1,12 @@
+Patient: P086 (Luis Tanaka) - synthetic test report
+DOB: 1966-03-11
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-23
+Treatment start: 2026-09-17 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-08
+Pain about 9/10 when eating.
+Throat pain around 4/10.
+Vomited twice yesterday.
+Swallowing is getting harder, only managing soft food.
+No vomiting today.

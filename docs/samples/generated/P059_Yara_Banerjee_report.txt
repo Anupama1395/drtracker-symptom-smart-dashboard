@@ -1,0 +1,11 @@
+Patient: P059 (Yara Banerjee) - synthetic test report
+DOB: 1950-03-08
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-08-20
+Treatment start: 2026-09-24 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-02
+Choked on water once.
+No vomiting today.
+Pain about 7/10 when eating.
+No fever.

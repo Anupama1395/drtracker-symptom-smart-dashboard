@@ -1,6 +1,7 @@
 # Phase 1: data survives pipeline runs, storage round-trips cleanly, duplicates and regex edge cases.
 import os
 import sqlite3
+from contextlib import closing
 from datetime import datetime
 
 import pandas as pd
@@ -76,7 +77,7 @@ def test_full_save_keeps_logs_and_is_atomic(folder):
     logged = len(corr)
     assert logged >= 1
     save(load(folder), folder)                                       # another full save
-    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+    with closing(sqlite3.connect(os.path.join(folder, DB_NAME))) as conn, conn:
         assert conn.execute("SELECT COUNT(*) FROM corrections").fetchone()[0] == logged
     assert not [f for f in os.listdir(folder) if f.endswith(".db") and f != DB_NAME]   # no temp files left
 

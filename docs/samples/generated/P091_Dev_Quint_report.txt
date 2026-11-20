@@ -1,0 +1,11 @@
+Patient: P091 (Dev Quint) - synthetic test report
+DOB: 1972-09-08
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-08-10
+Treatment start: 2026-09-09 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-25
+Mouth sores mild.
+Swallowing is getting harder, only managing soft food.
+Throat pain around 1/10.
+Threw up once after dinner.

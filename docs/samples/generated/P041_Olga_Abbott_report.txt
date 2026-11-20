@@ -1,0 +1,12 @@
+Patient: P041 (Olga Abbott) - synthetic test report
+DOB: 1966-06-11
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-19
+Treatment start: 2026-09-14 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-28
+Vomited twice yesterday.
+Mouth sores mild.
+Threw up twice after dinner.
+Nausea about 5/10 today.
+Felt off all day, not sure why.

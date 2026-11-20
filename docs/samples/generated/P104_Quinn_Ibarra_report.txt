@@ -1,0 +1,11 @@
+Patient: P104 (Quinn Ibarra) - synthetic test report
+DOB: 1960-05-27
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-07-28
+Treatment start: 2026-08-29 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-12
+Nausea around 9/10 after lunch, felt queasy most of the day.
+Choked on water once.
+No fever.
+Throat pain around 2/10.

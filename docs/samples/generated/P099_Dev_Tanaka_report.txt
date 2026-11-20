@@ -1,0 +1,10 @@
+Patient: P099 (Dev Tanaka) - synthetic test report
+DOB: 1960-06-05
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-16
+Treatment start: 2026-08-06 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-08-14
+Really tired, slept most of the afternoon.
+Nausea around 1/10 after lunch, felt queasy most of the day.
+No fever.

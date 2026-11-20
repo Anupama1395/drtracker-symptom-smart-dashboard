@@ -4,6 +4,7 @@ import json
 import os
 import re
 import sqlite3
+from contextlib import closing
 import time
 from typing import Optional, List, Literal
 
@@ -162,7 +163,7 @@ def cache_get(message: str):
     path = _cache_path()
     if not path or not os.path.exists(path):
         return None
-    with sqlite3.connect(path) as conn:
+    with closing(sqlite3.connect(path)) as conn, conn:   # close too: Windows locks open files
         row = conn.execute("SELECT response FROM llm_cache WHERE key = ?", (_cache_key(message),)).fetchone()
     return json.loads(row[0]) if row else None
 
@@ -172,7 +173,7 @@ def cache_put(message: str, response: dict):
     if not path:
         return
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    with sqlite3.connect(path) as conn:
+    with closing(sqlite3.connect(path)) as conn, conn:   # close too: Windows locks open files
         conn.execute("CREATE TABLE IF NOT EXISTS llm_cache (key TEXT PRIMARY KEY, model TEXT, "
                      "prompt_version TEXT, response TEXT, created_at TEXT)")
         conn.execute("INSERT OR REPLACE INTO llm_cache VALUES (?, ?, ?, ?, datetime('now'))",

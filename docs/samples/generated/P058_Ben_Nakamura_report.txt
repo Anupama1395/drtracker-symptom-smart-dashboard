@@ -1,0 +1,13 @@
+Patient: P058 (Ben Nakamura) - synthetic test report
+DOB: 1980-10-16
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-07-15
+Treatment start: 2026-08-06 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-08-25
+Vomited once yesterday.
+Felt off all day, not sure why.
+Nausea around 8/10 after lunch, felt queasy most of the day.
+No fever.
+Threw up once after dinner.
+Swallowing is getting harder, only managing soft food.

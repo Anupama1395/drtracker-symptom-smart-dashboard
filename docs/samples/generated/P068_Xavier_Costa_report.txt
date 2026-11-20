@@ -1,0 +1,12 @@
+Patient: P068 (Xavier Costa) - synthetic test report
+DOB: 1971-06-09
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-08-05
+Treatment start: 2026-09-04 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-12
+No vomiting today.
+No fever.
+Nausea about 1/10 today.
+Swallowing is getting harder, only managing soft food.
+Nausea around 4/10 after lunch, felt queasy most of the day.

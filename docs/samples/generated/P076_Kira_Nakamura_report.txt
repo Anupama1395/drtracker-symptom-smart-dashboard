@@ -1,0 +1,13 @@
+Patient: P076 (Kira Nakamura) - synthetic test report
+DOB: 1973-03-20
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-08-03
+Treatment start: 2026-08-25 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-07
+Pain about 9/10 when eating.
+Throat pain around 3/10.
+Nausea around 9/10 after lunch, felt queasy most of the day.
+Mouth sores maybe 2 out of 10, hard to eat solid food.
+Really tired, slept most of the afternoon.
+Choked on water once.

@@ -1,0 +1,13 @@
+Patient: P032 (Jonah Duarte) - synthetic test report
+DOB: 1959-12-21
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-07
+Treatment start: 2026-08-30 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-14
+Vomited once yesterday.
+Really tired, slept most of the afternoon.
+Nausea around 3/10 after lunch, felt queasy most of the day.
+Mouth sores maybe 7 out of 10, hard to eat solid food.
+Throat pain around 9/10.
+Threw up twice after dinner.

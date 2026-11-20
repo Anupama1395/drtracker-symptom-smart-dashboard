@@ -1,0 +1,10 @@
+Patient: P084 (Luis Costa) - synthetic test report
+DOB: 1978-09-17
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-17
+Treatment start: 2026-08-07 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-03
+Really tired, slept most of the afternoon.
+Mouth sores severe.
+No fever.

@@ -1,0 +1,12 @@
+Patient: P060 (Yara Duarte) - synthetic test report
+DOB: 1956-02-10
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-17
+Treatment start: 2026-09-16 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-29
+Vomited twice yesterday.
+Felt off all day, not sure why.
+Swallowing is getting harder, only managing soft food.
+Nausea about 8/10 today.
+Choked on water once.

@@ -1,0 +1,11 @@
+Patient: P075 (Dev Ueda) - synthetic test report
+DOB: 1972-04-02
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-08-07
+Treatment start: 2026-09-02 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-13
+No vomiting today.
+Nausea about 4/10 today.
+Swallowing is getting harder, only managing soft food.
+Choked on water once.

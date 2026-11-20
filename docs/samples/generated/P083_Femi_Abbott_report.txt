@@ -1,0 +1,11 @@
+Patient: P083 (Femi Abbott) - synthetic test report
+DOB: 1950-10-16
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-13
+Treatment start: 2026-09-06 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-27
+Felt off all day, not sure why.
+Throat pain around 2/10.
+Mouth sores maybe 3 out of 10, hard to eat solid food.
+Nausea around 6/10 after lunch, felt queasy most of the day.

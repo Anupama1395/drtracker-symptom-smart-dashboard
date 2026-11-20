@@ -1,0 +1,12 @@
+Patient: P101 (Dev Eriksen) - synthetic test report
+DOB: 1956-11-07
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-02
+Treatment start: 2026-08-28 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-14
+Nausea about 6/10 today.
+Mouth sores moderate.
+No vomiting today.
+Really tired, slept most of the afternoon.
+No fever.

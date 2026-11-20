@@ -1,0 +1,10 @@
+Patient: P014 (Sami Varga) - synthetic test report
+DOB: 1978-05-23
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-08
+Treatment start: 2026-09-12 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-10
+Throat pain around 2/10.
+Mouth sores moderate.
+Threw up once after dinner.

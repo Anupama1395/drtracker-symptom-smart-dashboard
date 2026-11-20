@@ -1,0 +1,12 @@
+Patient: P023 (Luis Young) - synthetic test report
+DOB: 1951-01-26
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-08-01
+Treatment start: 2026-08-29 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-13
+Throat pain around 2/10.
+Felt off all day, not sure why.
+Really tired, slept most of the afternoon.
+Mouth sores mild.
+Choked on water once.

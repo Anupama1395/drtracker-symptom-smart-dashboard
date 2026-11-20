@@ -1,0 +1,13 @@
+Patient: P038 (Quinn Rossi) - synthetic test report
+DOB: 1962-09-16
+Diagnosis: Laryngeal SCC, diagnosed 2026-07-30
+Treatment start: 2026-09-03 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-24
+Choked on water once.
+Throat pain around 4/10.
+Pain about 4/10 when eating.
+Mouth sores maybe 6 out of 10, hard to eat solid food.
+Really tired, slept most of the afternoon.
+No vomiting today.

@@ -1,0 +1,10 @@
+Patient: P052 (Carla Moreau) - synthetic test report
+DOB: 1974-10-03
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-07
+Treatment start: 2026-09-11 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-01
+No vomiting today.
+Nausea around 5/10 after lunch, felt queasy most of the day.
+Nausea about 3/10 today.

@@ -1,0 +1,13 @@
+Patient: P098 (Pavel Quint) - synthetic test report
+DOB: 1950-01-14
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-29
+Treatment start: 2026-08-28 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-13
+Swallowing is getting harder, only managing soft food.
+No fever.
+Nausea around 1/10 after lunch, felt queasy most of the day.
+Felt off all day, not sure why.
+Threw up once after dinner.
+Choked on water once.

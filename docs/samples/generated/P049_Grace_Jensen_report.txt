@@ -1,0 +1,12 @@
+Patient: P049 (Grace Jensen) - synthetic test report
+DOB: 1955-08-01
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-02
+Treatment start: 2026-08-30 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-08
+Mouth sores maybe 2 out of 10, hard to eat solid food.
+Vomited once yesterday.
+Felt off all day, not sure why.
+Nausea around 9/10 after lunch, felt queasy most of the day.
+Swallowing is getting harder, only managing soft food.

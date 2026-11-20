@@ -1,0 +1,13 @@
+Patient: P018 (Yara Varga) - synthetic test report
+DOB: 1985-07-13
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-09
+Treatment start: 2026-09-05 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-15
+Nausea about 2/10 today.
+Vomited twice yesterday.
+Nausea around 1/10 after lunch, felt queasy most of the day.
+Felt off all day, not sure why.
+Throat pain around 2/10.
+Threw up once after dinner.

@@ -1,0 +1,11 @@
+Patient: P074 (Hugo Osei) - synthetic test report
+DOB: 1973-01-10
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-29
+Treatment start: 2026-08-20 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-08-28
+Nausea around 8/10 after lunch, felt queasy most of the day.
+Mouth sores severe.
+Pain about 5/10 when eating.
+Threw up three times after dinner.

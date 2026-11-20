@@ -1,0 +1,12 @@
+Patient: P072 (Rosa Zhou) - synthetic test report
+DOB: 1957-05-10
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-01
+Treatment start: 2026-08-31 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-15
+Really tired, slept most of the afternoon.
+No vomiting today.
+Vomited once yesterday.
+Throat pain around 4/10.
+No fever.

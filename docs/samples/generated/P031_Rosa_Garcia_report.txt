@@ -1,0 +1,10 @@
+Patient: P031 (Rosa Garcia) - synthetic test report
+DOB: 1978-03-14
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-07-22
+Treatment start: 2026-08-18 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-08
+Choked on water once.
+Vomited once yesterday.
+Mouth sores maybe 4 out of 10, hard to eat solid food.

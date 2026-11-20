@@ -4,6 +4,7 @@
 import os
 import shutil
 import sqlite3
+from contextlib import closing
 import tempfile
 from datetime import date, datetime
 
@@ -143,8 +144,12 @@ def save_sqlite(store, path):
     try:
         if os.path.exists(path):
             shutil.copyfile(path, tmp)
-        with sqlite3.connect(tmp) as conn:
-            _write_tables(conn, store)
+        conn = sqlite3.connect(tmp)
+        try:
+            with conn:                       # commits (or rolls back) the transaction
+                _write_tables(conn, store)
+        finally:
+            conn.close()                     # Windows can't rename a file that is still open
         os.replace(tmp, path)
     finally:
         if os.path.exists(tmp):
@@ -166,14 +171,14 @@ def save(store, folder="data"):
 def _db_tables(path):
     if not os.path.exists(path):
         return set()
-    with sqlite3.connect(path) as conn:
+    with closing(sqlite3.connect(path)) as conn, conn:   # close too: Windows locks open files
         return {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
 
 def _read(folder, name, cols):
     db = os.path.join(folder, DB_NAME)
     if name in _db_tables(db):
-        with sqlite3.connect(db) as conn:
+        with closing(sqlite3.connect(db)) as conn, conn:   # close too: Windows locks open files
             df = pd.read_sql(f'SELECT * FROM "{name}"', conn)
     elif os.path.exists(csv := os.path.join(folder, f"{name}.csv")):
         df = pd.read_csv(csv)                                  # older data without a database
@@ -205,7 +210,7 @@ def update_rows(table, key_col, key_value, fields: dict, folder="data"):
         return 0
     vals = [_sql_value(v) for v in fields.values()]
     sets = ", ".join(f'"{c}" = ?' for c in fields)
-    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+    with closing(sqlite3.connect(os.path.join(folder, DB_NAME))) as conn, conn:   # close too: Windows locks open files
         existing = {r[1] for r in conn.execute(f'PRAGMA table_info("{table}")')}
         for c in fields:
             if c not in existing:
@@ -220,7 +225,7 @@ def append_rows(table, df, folder="data"):
     if df is None or len(df) == 0:
         return
     os.makedirs(folder, exist_ok=True)
-    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+    with closing(sqlite3.connect(os.path.join(folder, DB_NAME))) as conn, conn:   # close too: Windows locks open files
         storable(df).to_sql(table, conn, if_exists="append", index=False)
 
 
@@ -230,7 +235,7 @@ def _load_extra(name, folder):
 
 def _save_extra(name, df, folder):
     os.makedirs(folder, exist_ok=True)
-    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+    with closing(sqlite3.connect(os.path.join(folder, DB_NAME))) as conn, conn:   # close too: Windows locks open files
         storable(df).to_sql(name, conn, if_exists="replace", index=False)
     storable(df).to_csv(os.path.join(folder, f"{name}.csv"), index=False)
 
@@ -250,7 +255,7 @@ def load_review_log(folder="data"):
 def clear_review_history(folder="data"):
     """Used only when synthetic data is regenerated: old logs would point at events that no longer exist.
     Tables are dropped (not emptied) so the next append creates them with the right column types."""
-    with sqlite3.connect(os.path.join(folder, DB_NAME)) as conn:
+    with closing(sqlite3.connect(os.path.join(folder, DB_NAME))) as conn, conn:   # close too: Windows locks open files
         for name in EXTRA_TABLES:
             conn.execute(f'DROP TABLE IF EXISTS "{name}"')
     for name in EXTRA_TABLES:

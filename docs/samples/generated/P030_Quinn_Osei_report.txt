@@ -1,0 +1,12 @@
+Patient: P030 (Quinn Osei) - synthetic test report
+DOB: 1985-01-25
+Diagnosis: Oral cavity SCC, diagnosed 2026-07-19
+Treatment start: 2026-08-16 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-02
+Throat pain around 4/10.
+Pain about 9/10 when eating.
+Felt off all day, not sure why.
+No fever.
+Really tired, slept most of the afternoon.

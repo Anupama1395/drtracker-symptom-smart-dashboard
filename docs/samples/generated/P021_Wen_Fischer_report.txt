@@ -1,0 +1,12 @@
+Patient: P021 (Wen Fischer) - synthetic test report
+DOB: 1983-01-07
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-17
+Treatment start: 2026-09-12 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-23
+Choked on water once.
+Nausea around 6/10 after lunch, felt queasy most of the day.
+Really tired, slept most of the afternoon.
+No vomiting today.
+Pain about 3/10 when eating.

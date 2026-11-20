@@ -1,0 +1,13 @@
+Patient: P100 (Sami Zhou) - synthetic test report
+DOB: 1973-04-27
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-18
+Treatment start: 2026-09-22 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-20
+Nausea around 1/10 after lunch, felt queasy most of the day.
+Vomited once yesterday.
+Felt off all day, not sure why.
+Really tired, slept most of the afternoon.
+No fever.
+Nausea about 5/10 today.

@@ -1,0 +1,12 @@
+Patient: P043 (Uma Haddad) - synthetic test report
+DOB: 1955-10-17
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-07-24
+Treatment start: 2026-08-24 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-22
+Really tired, slept most of the afternoon.
+Throat pain around 3/10.
+Threw up once after dinner.
+No vomiting today.
+Swallowing is getting harder, only managing soft food.

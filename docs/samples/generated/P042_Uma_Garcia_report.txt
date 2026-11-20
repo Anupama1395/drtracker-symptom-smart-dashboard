@@ -1,0 +1,11 @@
+Patient: P042 (Uma Garcia) - synthetic test report
+DOB: 1965-09-25
+Diagnosis: Oral cavity SCC, diagnosed 2026-07-15
+Treatment start: 2026-08-06 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-08-21
+Mouth sores maybe 1 out of 10, hard to eat solid food.
+Swallowing is getting harder, only managing soft food.
+Nausea about 5/10 today.
+No fever.

@@ -1,0 +1,13 @@
+Patient: P050 (Luis Eriksen) - synthetic test report
+DOB: 1982-05-04
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-07
+Treatment start: 2026-08-31 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-22
+Nausea about 5/10 today.
+Threw up three times after dinner.
+No fever.
+Throat pain around 3/10.
+Choked on water once.
+Mouth sores maybe 7 out of 10, hard to eat solid food.

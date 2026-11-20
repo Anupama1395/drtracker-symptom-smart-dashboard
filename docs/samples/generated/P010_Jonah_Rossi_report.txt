@@ -1,0 +1,10 @@
+Patient: P010 (Jonah Rossi) - synthetic test report
+DOB: 1961-02-19
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-20
+Treatment start: 2026-09-20 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-03
+Pain about 1/10 when eating.
+Really tired, slept most of the afternoon.
+Nausea around 4/10 after lunch, felt queasy most of the day.

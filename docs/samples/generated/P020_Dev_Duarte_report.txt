@@ -1,0 +1,10 @@
+Patient: P020 (Dev Duarte) - synthetic test report
+DOB: 1981-08-16
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-14
+Treatment start: 2026-09-08 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-17
+Really tired, slept most of the afternoon.
+Mouth sores moderate.
+No fever.

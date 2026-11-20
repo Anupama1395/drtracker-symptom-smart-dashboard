@@ -1,0 +1,11 @@
+Patient: P094 (Noah Garcia) - synthetic test report
+DOB: 1983-10-21
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-08-16
+Treatment start: 2026-09-16 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-13
+Pain about 1/10 when eating.
+No vomiting today.
+Nausea around 8/10 after lunch, felt queasy most of the day.
+Felt off all day, not sure why.

@@ -1,0 +1,12 @@
+Patient: P008 (Kira Eriksen) - synthetic test report
+DOB: 1975-11-02
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-19
+Treatment start: 2026-08-22 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-15
+Swallowing is getting harder, only managing soft food.
+Nausea about 2/10 today.
+Pain about 7/10 when eating.
+Vomited twice yesterday.
+Felt off all day, not sure why.

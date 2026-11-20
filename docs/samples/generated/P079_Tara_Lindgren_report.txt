@@ -1,0 +1,10 @@
+Patient: P079 (Tara Lindgren) - synthetic test report
+DOB: 1982-03-05
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-08-06
+Treatment start: 2026-08-31 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-12
+Nausea around 4/10 after lunch, felt queasy most of the day.
+Mouth sores maybe 5 out of 10, hard to eat solid food.
+Throat pain around 3/10.

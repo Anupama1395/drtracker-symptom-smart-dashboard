@@ -1,0 +1,11 @@
+Patient: P080 (Pavel Kowalski) - synthetic test report
+DOB: 1953-10-21
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-08
+Treatment start: 2026-08-30 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-28
+Swallowing is getting harder, only managing soft food.
+Mouth sores maybe 8 out of 10, hard to eat solid food.
+No fever.
+Vomited once yesterday.

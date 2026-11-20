@@ -1,0 +1,13 @@
+Patient: P087 (Ben Garcia) - synthetic test report
+DOB: 1961-07-06
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-24
+Treatment start: 2026-09-28 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-13
+Threw up three times after dinner.
+Felt off all day, not sure why.
+No vomiting today.
+Nausea around 6/10 after lunch, felt queasy most of the day.
+Pain about 8/10 when eating.
+Nausea about 9/10 today.

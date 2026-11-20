@@ -1,0 +1,11 @@
+Patient: P097 (Xavier Garcia) - synthetic test report
+DOB: 1960-12-11
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-07-27
+Treatment start: 2026-08-31 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-19
+Mouth sores maybe 9 out of 10, hard to eat solid food.
+Choked on water once.
+Really tired, slept most of the afternoon.
+Felt off all day, not sure why.

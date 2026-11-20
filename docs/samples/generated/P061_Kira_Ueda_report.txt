@@ -1,0 +1,13 @@
+Patient: P061 (Kira Ueda) - synthetic test report
+DOB: 1965-08-17
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-30
+Treatment start: 2026-08-28 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-11
+Really tired, slept most of the afternoon.
+Choked on water once.
+No vomiting today.
+Nausea about 8/10 today.
+Felt off all day, not sure why.
+Vomited twice yesterday.

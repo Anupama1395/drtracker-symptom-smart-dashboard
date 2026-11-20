@@ -1,0 +1,10 @@
+Patient: P036 (Kira Rossi) - synthetic test report
+DOB: 1976-05-20
+Diagnosis: Oral cavity SCC, diagnosed 2026-07-23
+Treatment start: 2026-08-13 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-05
+Threw up once after dinner.
+No vomiting today.
+Nausea about 4/10 today.

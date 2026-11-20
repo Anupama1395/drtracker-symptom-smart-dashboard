@@ -1,0 +1,13 @@
+Patient: P048 (Elena Abbott) - synthetic test report
+DOB: 1980-01-16
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-01
+Treatment start: 2026-09-01 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-11
+No vomiting today.
+Really tired, slept most of the afternoon.
+Pain about 8/10 when eating.
+No fever.
+Throat pain around 2/10.
+Swallowing is getting harder, only managing soft food.

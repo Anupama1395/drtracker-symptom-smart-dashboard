@@ -1,0 +1,11 @@
+Patient: P093 (Hugo Fischer) - synthetic test report
+DOB: 1950-01-02
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-18
+Treatment start: 2026-09-08 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-27
+Threw up three times after dinner.
+Nausea about 9/10 today.
+Nausea around 4/10 after lunch, felt queasy most of the day.
+Felt off all day, not sure why.

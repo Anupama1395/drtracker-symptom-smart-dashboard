@@ -1,0 +1,11 @@
+Patient: P069 (Pavel Walsh) - synthetic test report
+DOB: 1979-07-26
+Diagnosis: Oral cavity SCC, diagnosed 2026-07-31
+Treatment start: 2026-09-04 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-24
+Throat pain around 3/10.
+Threw up three times after dinner.
+Nausea about 4/10 today.
+No vomiting today.

@@ -1,0 +1,13 @@
+Patient: P102 (Quinn Petrov) - synthetic test report
+DOB: 1968-10-24
+Diagnosis: Laryngeal SCC, diagnosed 2026-07-16
+Treatment start: 2026-08-18 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-07
+Pain about 9/10 when eating.
+Felt off all day, not sure why.
+Nausea around 4/10 after lunch, felt queasy most of the day.
+Mouth sores severe.
+Throat pain around 2/10.
+Nausea about 5/10 today.

@@ -1,0 +1,11 @@
+Patient: P044 (Quinn Ueda) - synthetic test report
+DOB: 1977-12-23
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-16
+Treatment start: 2026-09-08 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-01
+Nausea around 6/10 after lunch, felt queasy most of the day.
+Nausea about 2/10 today.
+Felt off all day, not sure why.
+Threw up twice after dinner.

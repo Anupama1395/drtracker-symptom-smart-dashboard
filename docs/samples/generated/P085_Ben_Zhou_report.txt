@@ -1,0 +1,11 @@
+Patient: P085 (Ben Zhou) - synthetic test report
+DOB: 1982-07-21
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-23
+Treatment start: 2026-08-13 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-08-22
+Threw up three times after dinner.
+Throat pain around 4/10.
+No vomiting today.
+No fever.

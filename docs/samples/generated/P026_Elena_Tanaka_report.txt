@@ -1,0 +1,10 @@
+Patient: P026 (Elena Tanaka) - synthetic test report
+DOB: 1980-11-12
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-07-24
+Treatment start: 2026-08-22 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-15
+Nausea about 2/10 today.
+Felt off all day, not sure why.
+Really tired, slept most of the afternoon.

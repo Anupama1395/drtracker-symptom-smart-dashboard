@@ -1,0 +1,12 @@
+Patient: P034 (Carla Ibarra) - synthetic test report
+DOB: 1967-01-25
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-26
+Treatment start: 2026-08-20 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-08-31
+Mouth sores maybe 8 out of 10, hard to eat solid food.
+Threw up three times after dinner.
+Pain about 6/10 when eating.
+Really tired, slept most of the afternoon.
+Swallowing is getting harder, only managing soft food.

@@ -1,0 +1,12 @@
+Patient: P096 (Xavier Walsh) - synthetic test report
+DOB: 1966-12-02
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-01
+Treatment start: 2026-09-01 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-25
+No vomiting today.
+Choked on water once.
+Vomited once yesterday.
+Nausea around 3/10 after lunch, felt queasy most of the day.
+Pain about 5/10 when eating.

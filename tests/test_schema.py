@@ -1,6 +1,7 @@
 # Schema, storage, generator, upload and FHIR-import tests. Everything runs in a temp folder;
 # the LLM is never called (uploads are parsed with the regex parser).
 import sqlite3
+from contextlib import closing
 from datetime import datetime
 from pathlib import Path
 
@@ -37,7 +38,7 @@ def test_save_load_roundtrip_and_sqlite_mirror(generated):
     again = load(str(folder))
     for name in COLUMNS:
         assert len(again[name]) == len(store[name])
-    with sqlite3.connect(folder / "symptomlens.db") as conn:
+    with closing(sqlite3.connect(folder / "symptomlens.db")) as conn, conn:
         tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     assert set(COLUMNS) <= tables
 
@@ -213,7 +214,7 @@ def test_upload_works_when_dates_were_converted_for_display(generated):
     reported = pd.read_csv(folder / "reports.csv")["reported_at"]
     assert reported.str.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}").all()
     assert pd.read_csv(folder / "visits.csv")["visit_date"].str.fullmatch(r"\d{4}-\d{2}-\d{2}").all()
-    with sqlite3.connect(folder / "symptomlens.db") as conn:
+    with closing(sqlite3.connect(folder / "symptomlens.db")) as conn, conn:
         assert conn.execute("SELECT COUNT(*) FROM reports WHERE source='upload'").fetchone()[0] == 1
 
 

@@ -1,0 +1,13 @@
+Patient: P063 (Grace Jensen) - synthetic test report
+DOB: 1962-04-15
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-29
+Treatment start: 2026-08-23 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-08
+Swallowing is getting harder, only managing soft food.
+Threw up three times after dinner.
+Vomited once yesterday.
+Throat pain around 7/10.
+Mouth sores maybe 1 out of 10, hard to eat solid food.
+Nausea about 4/10 today.

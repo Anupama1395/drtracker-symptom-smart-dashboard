@@ -1,0 +1,10 @@
+Patient: P103 (Noah Abbott) - synthetic test report
+DOB: 1983-04-10
+Diagnosis: Oral cavity SCC, diagnosed 2026-07-18
+Treatment start: 2026-08-08 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-08-26
+Throat pain around 8/10.
+Really tired, slept most of the afternoon.
+Threw up three times after dinner.

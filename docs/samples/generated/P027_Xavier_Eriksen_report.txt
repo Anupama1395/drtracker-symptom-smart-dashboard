@@ -1,0 +1,12 @@
+Patient: P027 (Xavier Eriksen) - synthetic test report
+DOB: 1977-04-27
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-07-28
+Treatment start: 2026-08-18 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-02
+Pain about 9/10 when eating.
+Vomited twice yesterday.
+Swallowing is getting harder, only managing soft food.
+Mouth sores mild.
+No vomiting today.

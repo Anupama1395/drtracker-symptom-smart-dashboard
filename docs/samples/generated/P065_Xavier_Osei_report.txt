@@ -1,0 +1,13 @@
+Patient: P065 (Xavier Osei) - synthetic test report
+DOB: 1952-05-22
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-08
+Treatment start: 2026-09-11 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-29
+Threw up twice after dinner.
+Nausea around 7/10 after lunch, felt queasy most of the day.
+Nausea about 2/10 today.
+Felt off all day, not sure why.
+No vomiting today.
+Choked on water once.

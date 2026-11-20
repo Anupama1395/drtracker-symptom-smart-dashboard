@@ -1,0 +1,11 @@
+Patient: P055 (Quinn Petrov) - synthetic test report
+DOB: 1985-04-15
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-08-05
+Treatment start: 2026-09-07 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-28
+Pain about 3/10 when eating.
+Vomited twice yesterday.
+Felt off all day, not sure why.
+Nausea around 9/10 after lunch, felt queasy most of the day.

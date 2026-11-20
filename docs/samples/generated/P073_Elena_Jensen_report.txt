@@ -1,0 +1,10 @@
+Patient: P073 (Elena Jensen) - synthetic test report
+DOB: 1962-06-03
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-09
+Treatment start: 2026-09-03 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-17
+Choked on water once.
+Throat pain around 2/10.
+Nausea about 1/10 today.

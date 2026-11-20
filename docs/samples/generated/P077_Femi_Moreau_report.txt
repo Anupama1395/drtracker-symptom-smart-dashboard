@@ -1,0 +1,12 @@
+Patient: P077 (Femi Moreau) - synthetic test report
+DOB: 1967-07-10
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-03
+Treatment start: 2026-08-30 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-07
+Mouth sores maybe 7 out of 10, hard to eat solid food.
+No fever.
+Nausea about 7/10 today.
+Mouth sores mild.
+Vomited once yesterday.

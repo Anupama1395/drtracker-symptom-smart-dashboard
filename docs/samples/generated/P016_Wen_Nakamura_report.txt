@@ -1,0 +1,11 @@
+Patient: P016 (Wen Nakamura) - synthetic test report
+DOB: 1972-11-13
+Diagnosis: Oral cavity SCC, diagnosed 2026-07-29
+Treatment start: 2026-08-21 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-08-30
+Vomited twice yesterday.
+Choked on water once.
+No fever.
+Nausea about 3/10 today.

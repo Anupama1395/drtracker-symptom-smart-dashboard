@@ -1,0 +1,13 @@
+Patient: P009 (Hugo Costa) - synthetic test report
+DOB: 1985-07-02
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-20
+Treatment start: 2026-09-11 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-25
+Nausea about 7/10 today.
+Vomited once yesterday.
+No fever.
+Pain about 9/10 when eating.
+Threw up once after dinner.
+No vomiting today.

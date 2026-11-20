@@ -1,0 +1,11 @@
+Patient: P047 (Pavel Varga) - synthetic test report
+DOB: 1968-01-20
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-24
+Treatment start: 2026-09-24 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-07
+Mouth sores severe.
+No vomiting today.
+Choked on water once.
+Felt off all day, not sure why.

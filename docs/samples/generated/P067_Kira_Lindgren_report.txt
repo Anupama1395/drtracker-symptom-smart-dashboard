@@ -1,0 +1,10 @@
+Patient: P067 (Kira Lindgren) - synthetic test report
+DOB: 1980-01-21
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-10
+Treatment start: 2026-09-03 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-30
+Mouth sores maybe 2 out of 10, hard to eat solid food.
+Nausea about 1/10 today.
+Throat pain around 5/10.

@@ -1,0 +1,13 @@
+Patient: P056 (Kira Haddad) - synthetic test report
+DOB: 1973-05-26
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-20
+Treatment start: 2026-09-13 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-20
+Mouth sores maybe 6 out of 10, hard to eat solid food.
+Really tired, slept most of the afternoon.
+Pain about 1/10 when eating.
+Vomited twice yesterday.
+No fever.
+No vomiting today.

@@ -1,0 +1,11 @@
+Patient: P081 (Grace Banerjee) - synthetic test report
+DOB: 1975-09-06
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-08
+Treatment start: 2026-09-03 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-13
+Really tired, slept most of the afternoon.
+Vomited once yesterday.
+Nausea about 6/10 today.
+Pain about 2/10 when eating.

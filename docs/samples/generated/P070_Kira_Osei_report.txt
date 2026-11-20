@@ -1,0 +1,11 @@
+Patient: P070 (Kira Osei) - synthetic test report
+DOB: 1973-10-03
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-16
+Treatment start: 2026-09-09 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-28
+Mouth sores maybe 8 out of 10, hard to eat solid food.
+Nausea around 9/10 after lunch, felt queasy most of the day.
+Choked on water once.
+Nausea about 9/10 today.

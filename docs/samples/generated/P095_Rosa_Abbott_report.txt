@@ -1,0 +1,11 @@
+Patient: P095 (Rosa Abbott) - synthetic test report
+DOB: 1974-07-24
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-13
+Treatment start: 2026-09-04 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-04
+Vomited once yesterday.
+Nausea around 2/10 after lunch, felt queasy most of the day.
+No vomiting today.
+No fever.

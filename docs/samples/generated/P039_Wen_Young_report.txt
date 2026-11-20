@@ -1,0 +1,10 @@
+Patient: P039 (Wen Young) - synthetic test report
+DOB: 1958-07-12
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-07-18
+Treatment start: 2026-08-21 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-01
+Choked on water once.
+Really tired, slept most of the afternoon.
+No vomiting today.

@@ -1,0 +1,13 @@
+Patient: P045 (Rosa Banerjee) - synthetic test report
+DOB: 1951-11-18
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-07-30
+Treatment start: 2026-08-27 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-11
+Felt off all day, not sure why.
+Nausea around 9/10 after lunch, felt queasy most of the day.
+Really tired, slept most of the afternoon.
+Pain about 2/10 when eating.
+Choked on water once.
+No fever.

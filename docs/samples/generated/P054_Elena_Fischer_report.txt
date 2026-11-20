@@ -1,0 +1,13 @@
+Patient: P054 (Elena Fischer) - synthetic test report
+DOB: 1980-07-11
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-02
+Treatment start: 2026-08-27 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-11
+Choked on water once.
+Vomited once yesterday.
+No vomiting today.
+Throat pain around 3/10.
+Pain about 3/10 when eating.
+Mouth sores maybe 2 out of 10, hard to eat solid food.

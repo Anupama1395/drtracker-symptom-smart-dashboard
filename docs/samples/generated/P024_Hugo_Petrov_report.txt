@@ -1,0 +1,13 @@
+Patient: P024 (Hugo Petrov) - synthetic test report
+DOB: 1962-06-07
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-14
+Treatment start: 2026-09-13 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-09
+Choked on water once.
+Mouth sores severe.
+No fever.
+Nausea around 4/10 after lunch, felt queasy most of the day.
+Really tired, slept most of the afternoon.
+Mouth sores maybe 8 out of 10, hard to eat solid food.

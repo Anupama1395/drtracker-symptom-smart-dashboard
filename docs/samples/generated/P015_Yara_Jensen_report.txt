@@ -1,0 +1,11 @@
+Patient: P015 (Yara Jensen) - synthetic test report
+DOB: 1958-12-08
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-09
+Treatment start: 2026-09-05 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-27
+Throat pain around 3/10.
+Mouth sores maybe 7 out of 10, hard to eat solid food.
+Pain about 9/10 when eating.
+No vomiting today.

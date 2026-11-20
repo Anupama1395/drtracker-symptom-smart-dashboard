@@ -1,0 +1,10 @@
+Patient: P090 (Uma Nakamura) - synthetic test report
+DOB: 1976-09-12
+Diagnosis: Oral cavity SCC, diagnosed 2026-07-18
+Treatment start: 2026-08-10 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-01
+Nausea about 6/10 today.
+No fever.
+Felt off all day, not sure why.

@@ -1,0 +1,10 @@
+Patient: P089 (Femi Tanaka) - synthetic test report
+DOB: 1953-05-27
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-17
+Treatment start: 2026-09-11 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-27
+Really tired, slept most of the afternoon.
+Nausea about 3/10 today.
+Vomited twice yesterday.

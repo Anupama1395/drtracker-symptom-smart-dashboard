@@ -1,0 +1,11 @@
+Patient: P040 (Femi Banerjee) - synthetic test report
+DOB: 1955-11-27
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-08
+Treatment start: 2026-09-11 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-04
+Really tired, slept most of the afternoon.
+No vomiting today.
+Nausea about 3/10 today.
+Throat pain around 3/10.

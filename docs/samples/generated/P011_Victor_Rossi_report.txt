@@ -1,0 +1,12 @@
+Patient: P011 (Victor Rossi) - synthetic test report
+DOB: 1977-06-15
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-21
+Treatment start: 2026-09-25 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-16
+Vomited twice yesterday.
+Felt off all day, not sure why.
+Threw up three times after dinner.
+No fever.
+Nausea around 8/10 after lunch, felt queasy most of the day.

@@ -1,0 +1,12 @@
+Patient: P106 (Elena Rossi) - synthetic test report
+DOB: 1952-06-19
+Diagnosis: Oral cavity SCC, diagnosed 2026-08-04
+Treatment start: 2026-09-02 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-13
+Threw up once after dinner.
+Throat pain around 3/10.
+Felt off all day, not sure why.
+No vomiting today.
+Swallowing is getting harder, only managing soft food.

@@ -1,0 +1,11 @@
+Patient: P078 (Femi Nakamura) - synthetic test report
+DOB: 1957-02-13
+Diagnosis: Hypopharyngeal SCC, diagnosed 2026-08-20
+Treatment start: 2026-09-24 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-12
+Threw up once after dinner.
+Nausea about 7/10 today.
+Felt off all day, not sure why.
+Pain about 2/10 when eating.

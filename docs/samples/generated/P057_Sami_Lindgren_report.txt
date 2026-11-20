@@ -1,0 +1,12 @@
+Patient: P057 (Sami Lindgren) - synthetic test report
+DOB: 1958-11-17
+Diagnosis: Laryngeal SCC, diagnosed 2026-08-17
+Treatment start: 2026-09-17 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-30
+Vomited twice yesterday.
+Mouth sores maybe 5 out of 10, hard to eat solid food.
+Felt off all day, not sure why.
+Choked on water once.
+Throat pain around 1/10.

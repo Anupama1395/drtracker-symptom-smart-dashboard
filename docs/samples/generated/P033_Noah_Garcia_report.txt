@@ -1,0 +1,13 @@
+Patient: P033 (Noah Garcia) - synthetic test report
+DOB: 1972-06-03
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-08-07
+Treatment start: 2026-08-28 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-14
+Really tired, slept most of the afternoon.
+Nausea about 9/10 today.
+Mouth sores maybe 2 out of 10, hard to eat solid food.
+Mouth sores mild.
+Pain about 4/10 when eating.
+No vomiting today.

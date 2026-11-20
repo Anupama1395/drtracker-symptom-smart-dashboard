@@ -1,0 +1,13 @@
+Patient: P092 (Elena Osei) - synthetic test report
+DOB: 1956-02-21
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-07-24
+Treatment start: 2026-08-27 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-24
+Felt off all day, not sure why.
+No vomiting today.
+Nausea about 8/10 today.
+Really tired, slept most of the afternoon.
+Pain about 9/10 when eating.
+Mouth sores severe.

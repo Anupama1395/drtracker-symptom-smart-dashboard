@@ -1,8 +1,38 @@
+# SymptomLens requirements
+#
+# ---------------------------------------------------------------------------
+# 1. Python 3.11 or newer (pandas 3 needs it; tested on 3.12 and 3.13)
+# ---------------------------------------------------------------------------
+#
+# ---------------------------------------------------------------------------
+# 2. Python packages:  pip install -r requirements.txt
+# ---------------------------------------------------------------------------
 pandas==3.1.1
 pydantic==2.14.3
-ollama==0.6.3
+ollama==0.6.3          # Python CLIENT for Ollama only - not the app or the model (see 3 below)
 httpx==0.28.1
 streamlit==1.67.0
 plotly==7.1.0
 pypdf==7.1.1
 pytest==9.2.0
+#
+# ---------------------------------------------------------------------------
+# 3. NOT installable with pip - install these separately
+# ---------------------------------------------------------------------------
+# a) Ollama app (local LLM server on http://localhost:11434)
+#      Windows:  winget install Ollama.Ollama     (or https://ollama.com/download)
+#      macOS:    brew install ollama              (or https://ollama.com/download)
+#      Linux:    curl -fsSL https://ollama.com/install.sh | sh
+#
+# b) LLM model used by parser.py (about 4.9 GB):
+#      ollama pull llama3.1:8b
+#    A different model can be used with:  SYMPTOMLENS_MODEL=<name>
+#
+# c) Optional, only for comparing models with
+#    python evaluate.py --models llama3.1:8b qwen2.5:7b mistral
+#      ollama pull qwen2.5:7b
+#      ollama pull mistral
+#
+# Without Ollama + model everything still runs: reports go through the regex
+# fallback and every item is flagged for review. Tests and CI mock the LLM,
+# so they need neither.

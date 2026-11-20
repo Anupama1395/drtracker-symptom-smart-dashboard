@@ -1,0 +1,11 @@
+Patient: P022 (Yara Haddad) - synthetic test report
+DOB: 1984-09-25
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-16
+Treatment start: 2026-09-11 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-08
+Felt off all day, not sure why.
+Vomited once yesterday.
+Mouth sores maybe 9 out of 10, hard to eat solid food.
+No fever.

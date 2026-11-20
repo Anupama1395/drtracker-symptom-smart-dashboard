@@ -1,0 +1,10 @@
+Patient: P029 (Elena Petrov) - synthetic test report
+DOB: 1957-09-02
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-08-04
+Treatment start: 2026-09-04 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-09-27
+Pain about 4/10 when eating.
+Nausea about 5/10 today.
+Vomited once yesterday.

@@ -1,0 +1,12 @@
+Patient: P037 (Uma Jensen) - synthetic test report
+DOB: 1983-04-10
+Diagnosis: Nasopharyngeal carcinoma, diagnosed 2026-08-12
+Treatment start: 2026-09-10 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-10-08
+Mouth sores mild.
+Felt off all day, not sure why.
+Nausea about 1/10 today.
+No vomiting today.
+Really tired, slept most of the afternoon.

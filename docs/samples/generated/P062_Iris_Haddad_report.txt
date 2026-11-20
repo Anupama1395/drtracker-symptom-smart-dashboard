@@ -1,0 +1,13 @@
+Patient: P062 (Iris Haddad) - synthetic test report
+DOB: 1977-06-08
+Diagnosis: Tongue SCC (oral cavity), diagnosed 2026-08-15
+Treatment start: 2026-09-05 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg, olanzapine 5 mg
+
+Date: 2026-10-04
+Mouth sores severe.
+Choked on water once.
+Mouth sores maybe 9 out of 10, hard to eat solid food.
+Vomited once yesterday.
+Nausea about 4/10 today.
+No vomiting today.

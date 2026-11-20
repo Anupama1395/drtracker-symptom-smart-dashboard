@@ -1,0 +1,12 @@
+Patient: P035 (Iris Banerjee) - synthetic test report
+DOB: 1961-07-03
+Diagnosis: Oropharyngeal SCC, diagnosed 2026-08-01
+Treatment start: 2026-08-22 (radiation + weekly cisplatin)
+Medications: cisplatin 40 mg/m2 weekly, ondansetron 8 mg
+
+Date: 2026-09-18
+Nausea around 2/10 after lunch, felt queasy most of the day.
+Swallowing is getting harder, only managing soft food.
+Vomited twice yesterday.
+No fever.
+No vomiting today.
