@@ -43,7 +43,7 @@ class Extraction(BaseModel):
 # ---------------- part 2: LLM call ----------------
 # Configurable without code changes:  SYMPTOMLENS_MODEL=qwen2.5:7b python pipeline_runner.py --reparse
 MODEL = os.environ.get("SYMPTOMLENS_MODEL", "llama3.1:8b")
-PROMPT_VERSION = "v2"            # bump whenever SYSTEM or the examples change; stored on every event
+PROMPT_VERSION = "v3"           # bump whenever SYSTEM or the examples change; stored on every event
 REVIEW_THRESHOLD = 0.6           # below this confidence an event goes to human review
 CLIENT = ollama.Client(timeout=120)      # a hung server becomes a timeout -> fallback, not a frozen run
 
@@ -101,7 +101,10 @@ def llm_schema() -> dict:
     ev = s["$defs"]["SymptomEvent"]
     for k in ("needs_review", "flags"):
         ev["properties"].pop(k, None)
-    ev["required"] = [r for r in ev.get("required", []) if r not in ("needs_review", "flags")]
+    # Every remaining field is REQUIRED (null is still allowed where the type permits it). With
+    # constrained decoding, Ollama lets the model skip optional keys, and llama3.1 then omits
+    # severity/frequency entirely, so every event would arrive with severity = None.
+    ev["required"] = list(ev["properties"])
     return s
 
 

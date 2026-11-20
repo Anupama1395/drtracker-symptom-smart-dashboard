@@ -18,7 +18,13 @@ def reported(df):
 
 def default_last_visit(d: Data, pid) -> pd.Timestamp:
     v = d.visits[(d.visits["patient_id"] == pid) & (d.visits["visit_date"] <= d.as_of)]
-    return v["visit_date"].max() if len(v) else d.as_of - pd.Timedelta(days=14)
+    if len(v):
+        return v["visit_date"].max()
+    # No visit on record (e.g. a patient created from an uploaded note): nothing has been seen at a
+    # visit yet, so start the window no later than their first report, or older notes would be hidden.
+    fallback = d.as_of - pd.Timedelta(days=14)
+    first = d.reps.loc[d.reps["patient_id"] == pid, "reported_at"].min()
+    return min(fallback, first.normalize()) if pd.notna(first) else fallback
 
 
 def summarize(d: Data, pid, lv: pd.Timestamp) -> dict:

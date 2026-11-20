@@ -37,6 +37,14 @@ def test_schema_sent_to_ollama_matches_pydantic_model():
     assert ev["properties"]["symptom"]["enum"][0] == "nausea"
 
 
+def test_schema_requires_every_field_so_the_model_cannot_skip_severity():
+    # Regression: with severity/frequency optional, llama3.1 under constrained decoding omitted them
+    # on every event, so all severity cards showed a dash after --reparse.
+    ev = llm_schema()["$defs"]["SymptomEvent"]
+    assert set(ev["required"]) == set(ev["properties"])
+    assert {"type": "null"} in ev["properties"]["severity"]["anyOf"]     # "not stated" still allowed
+
+
 def test_call_llm_passes_schema_and_falls_back_to_plain_json(monkeypatch):
     sent = []
 
